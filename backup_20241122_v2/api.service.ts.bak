@@ -1,0 +1,112 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+
+  // URL BASE DEL BACKEND EN RENDER (SIN /api al final)
+  private baseUrl = 'https://bentasca-backend2.onrender.com';
+
+  constructor(private http: HttpClient) { }
+
+  // ==================== AUTH – RUTAS REALES SIN /api ====================
+
+  registrarUsuario(usuario: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/usuarios/register`, usuario);
+  }
+
+  login(credenciales: { email: string; password: string }): Observable<any> {
+  return this.http.post<any>(`${this.baseUrl}/usuarios/login`, credenciales).pipe(
+    tap((res: any) => {
+      if (res.token) {
+        localStorage.setItem('token', res.token);   // ← guardamos el token
+      }
+    })
+  );
+}
+
+  getMiPerfil(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/usuarios/me`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  cambiarPassword(actual: string, nueva: string): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/usuarios/change-password`, 
+      { actual, nueva },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ==================== RUTAS CON /api (el resto, intactas) ====================
+
+  getTablaAnual(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/api/tablas/anual`);
+  }
+
+  getTablaClausura(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/api/tablas/clausura`);
+  }
+
+  getEventos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/api/eventos`);
+  }
+
+  getEventoById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/api/eventos/${id}`);
+  }
+
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/api/usuarios`);
+  }
+
+  getUsuarioById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/api/usuarios/${id}`);
+  }
+
+  getGoleadores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/api/goleadores`);
+  }
+
+  crearReserva(reserva: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/api/reservas`, reserva);
+  }
+
+  // ==================== HELPER ====================
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+ 
+ 
+  actualizarFotoPerfil(foto: string) {
+    // Solo enviamos el nombre del archivo, no la ruta completa
+    const nombreArchivo = foto.includes('/') ? foto.split('/').pop() : foto;
+    return this.http.put<any>(
+      `${this.baseUrl}/usuarios/foto`, 
+      { foto: nombreArchivo }, 
+      { 
+        headers: this.getAuthHeaders(),
+        withCredentials: true  // Asegura que se envíen las cookies de autenticación
+      }
+    ).pipe(
+      tap(response => {
+        // Actualizar el token si viene en la respuesta
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+        }
+      })
+    );
+  }
+}

@@ -1,0 +1,46 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <a routerLink="/" class="logo">
+      <img src="assets/img/logo.png" alt="BENTASCA">
+    </a>
+
+    <nav class="nav">
+      <button #navToggle class="nav-toggle" (click)="toggleMenu()" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul #navLinks class="nav-links">
+        <li><a routerLink="/" class="nav-link" (click)="closeMenu()">Inicio</a></li>
+        <li><a routerLink="/agendar" class="nav-link" (click)="closeMenu()">Reservas</a></li>
+        <li><a routerLink="/torneos" class="nav-link" (click)="closeMenu()">Torneos</a></li>
+        <li><a routerLink="/tablas" class="nav-link" (click)="closeMenu()">Tablas</a></li>
+        <li><a href="#contacto" class="nav-link" (click)="closeMenu(); $event.preventDefault(); scrollTo('contacto')">Contacto</a></li>
+
+        <!-- USUARIO LOGUEADO -->
+        <li class="user-section" *ngIf="hayToken; else loginBtn">
+          <a routerLink="/perfil" class="user-profile" (click)="closeMenu()">
+            <img 
+              [src]="(usuario?.foto && !usuario.foto.startsWith('http') ? 'assets/avatars/' + usuario.foto : usuario?.foto) || 'assets/img/default-avatar.png'" 
+              (error)="handleImageError($event)"
+              alt="Avatar"
+              class="avatar"
+            >
+            <span class="user-name">{{ usuario?.nombre?.split(' ')[0] || 'Usuario' }}</span>
+          </a>
+          <button class="btn-logout" (click)="logout(); $event.stopPropagation()">
+            Cerrar sesión
+          </button>
+        </li>
+
+        <!-- BOTÓN INICIAR SESIÓN -->
+        <ng-template #loginBtn>
+          <li>
+            <a routerLink="/login" class="login-btn" (click)="closeMenu()">
+              Iniciar sesión
+            </a>
+          </li>
+        </ng-template>
+      </ul>
+    </nav>
+  </div>
+</header>

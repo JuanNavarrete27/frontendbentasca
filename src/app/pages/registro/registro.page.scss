@@ -1,0 +1,113 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: var(--bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-content {
+  padding: 3.5rem 3rem 3rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 3.2rem !important;
+  font-weight: 800;
+  margin-bottom: .5rem;
+  color: white;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  opacity: .9;
+}
+
+// Inputs más grandes y pro
+.input {
+  height: 58px;
+  font-size: 1.15rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 0 1.4rem;
+  transition: all .25s ease;
+  color: var(--green);
+
+  &:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(32,195,90,.18);
+    transform: translateY(-2px);
+  }
+}
+
+// Botón principal: grande, verde y con efecto
+.btn.primary {
+  height: 62px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 16px;
+  margin-top: 1.5rem;
+  background: var(--green);
+  box-shadow: 0 10px 25px rgba(32,195,90,.35);
+  transition: all .3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(32,195,90,.5);
+    background: var(--green-dark);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// Link de "ya tengo cuenta"
+.has-text-centered a {
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .2s;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: .9;
+  }
+}
+
+// Notificaciones más lindas
+.notification {
+  border-radius: 14px;
+  padding: 1.2rem;
+  font-weight: 600;
+  margin-top: 1rem 0;
+}
+
+// Responsive para móviles
+@media (max-width: 480px) {
+  .card-content {
+    padding: 2.5rem 2rem;
+  }
+  
+  .title {
+    font-size: 2.7rem !important;
+  }
+  
+  .btn.primary {
+    height: 58px;
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,19 @@
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+:root {
+  --green: #20c35a;
+  --green-dark: #18a94b;
+  --bg: #0b0f12;
+  --surface: #11161b;
+  --text: #e9f1ee;
+  --muted: #b8c3be;
+  --shadow: 0 10px 30px rgba(0,0,0,.25);
+}

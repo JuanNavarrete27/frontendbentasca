@@ -1,0 +1,54 @@
+<main class="section" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem 1rem;">
+  <div style="max-width:420px; width:100%;">
+    <div class="card" style="background:var(--surface); border:1px solid rgba(255,255,255,.1);">
+      <div class="card-content" style="padding:2.5rem;">
+        
+        <div class="has-text-centered mb-6">
+          <h1 class="title has-text-white" style="font-size:2.8rem;">BENTASCA</h1>
+          <p class="subtitle has-text-muted">Panel de administración</p>
+        </div>
+
+        <form (ngSubmit)="login()">
+          <div class="field mb-5">
+            <label class="label has-text-white">Email</label>
+            <div class="control">
+              <input class="input is-large" type="email" [(ngModel)]="credenciales.email" name="email" required>
+            </div>
+          </div>
+
+          <div class="field mb-6">
+            <label class="label has-text-white">Contraseña</label>
+            <div class="control">
+              <input class="input is-large" type="password" [(ngModel)]="credenciales.password" name="password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando">
+            <strong *ngIf="!cargando">Iniciar Sesión</strong>
+            <span *ngIf="cargando">Entrando...</span>
+          </button>
+
+          <p class="has-text-centered mt-5 has-text-muted">
+            ¿No tenés cuenta? <a href="/registro" style="color:var(--green);">Registrate</a>
+          </p>
+
+          <div class="notification is-danger mt-4" *ngIf="error" style="border-radius:12px;">{{ error }}</div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Animación de éxito -->
+  <div class="success-overlay" *ngIf="exito">
+    <div class="success-animation">
+      <div class="success-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="40" fill="var(--green)"/>
+          <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="success-text">¡Bienvenido!</h2>
+      <p class="success-subtext">Iniciando sesión...</p>
+    </div>
+  </div>
+</main>

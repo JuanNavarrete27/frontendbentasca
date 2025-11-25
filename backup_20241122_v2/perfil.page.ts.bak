@@ -1,0 +1,147 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ApiService } from '@services/api.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-perfil',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './perfil.page.html',
+  styleUrls: ['./perfil.page.scss']
+})
+export class PerfilPage implements OnInit {
+  usuario: any = null;
+  cargando = true;
+  error = false;
+
+  subiendo = false;
+
+  mostrarPicker = false;
+
+  // Íconos disponibles en assets/avatars/
+  readonly iconos = ['avatar1.png', 'avatar2.png', 'avatar3.png', 'avatar4.png'];
+  iconoSeleccionado: string | null = null;
+
+  readonly avatarPath = 'assets/avatars/';
+  readonly defaultAvatar = this.avatarPath + 'avatar1.png';
+
+  constructor(
+    private api: ApiService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarPerfil();
+  }
+
+  cargarPerfil() {
+    this.cargando = true;
+    this.error = false;
+
+    this.api.getMiPerfil().subscribe({
+      next: (data) => {
+        this.usuario = data;
+        // Si no tiene foto, usamos el primer ícono como seleccionado por defecto
+        if (!this.usuario?.foto) {
+          this.iconoSeleccionado = this.iconos[0];
+        }
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.warn('Error al cargar perfil:', err);
+        // NO REDIRIGE MÁS, SOLO MUESTRA ERROR
+        this.error = true;
+        this.cargando = false;
+        // Si es 401, logout
+        if (err.status === 401) {
+          this.api.logout();
+          this.router.navigate(['/login']);
+        }
+      }
+    });
+  }
+
+  togglePicker(): void {
+    this.mostrarPicker = !this.mostrarPicker;
+  }
+
+  async cambiarIcono(icono: string): Promise<void> {
+    this.iconoSeleccionado = icono;
+    this.subiendo = true;
+
+    try {
+      // Guardar solo el nombre del archivo del ícono en la base de datos
+      this.api.actualizarFotoPerfil(icono).subscribe({
+        next: (res) => {
+          // Actualizar el perfil local con la respuesta del servidor
+          if (res.usuario) {
+            this.usuario = res.usuario;
+          } else {
+            // Si el servidor no devuelve el usuario actualizado, actualizamos solo la foto
+            this.usuario.foto = this.avatarPath + (icono.includes('/') ? icono.split('/').pop() : icono);
+          }
+          
+          // Guardar en localStorage
+          localStorage.setItem('usuario', JSON.stringify(this.usuario));
+          
+          // Notificar a otros componentes
+          this.notificarHeader();
+          
+          // Cerrar el selector de íconos
+          this.mostrarPicker = false;
+          
+          // Mostrar mensaje de éxito
+          this.subiendo = false;
+          alert('¡Ícono de perfil actualizado correctamente!');
+        },
+        error: (error) => {
+          console.error('Error al actualizar el ícono:', error);
+          this.subiendo = false;
+          
+          // Mensaje de error más descriptivo
+          let mensajeError = 'Error al guardar el ícono. ';
+          if (error.status === 401) {
+            mensajeError += 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.';
+            this.api.logout();
+            this.router.navigate(['/login']);
+          } else if (error.error?.message) {
+            mensajeError += error.error.message;
+          } else {
+            mensajeError += 'Por favor, verifica tu conexión e inténtalo de nuevo.';
+          }
+          
+          alert(mensajeError);
+        }
+      });
+    } catch (e) {
+      console.error('Error inesperado:', e);
+      this.subiendo = false;
+      alert('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
+    }
+  }
+
+  private cargarIconoComoBase64(url: string): Promise<string> {
+    return fetch(url)
+      .then(res => res.blob())
+      .then(blob => new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(blob);
+      }));
+  }
+
+  private notificarHeader(): void {
+    // Forzar actualización del header en todas las pestañas
+    localStorage.setItem('usuarioActualizado', Date.now().toString());
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('usuarioActualizado'));
+  }
+
+  cerrarSesion(): void {
+    this.api.logout();
+    this.router.navigate(['/']);
+  }
+  
+}

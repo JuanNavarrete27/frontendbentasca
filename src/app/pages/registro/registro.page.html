@@ -1,0 +1,50 @@
+<main class="section" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem 1rem;">
+  <div style="max-width:420px; width:100%;">
+    <div class="card" style="background:var(--surface); border:1px solid rgba(255,255,255,.1);">
+      <div class="card-content" style="padding:2.5rem;">
+        
+        <div class="has-text-centered mb-6">
+          <h1 class="title has-text-white" style="font-size:2.8rem;">BENTASCA</h1>
+          <p class="subtitle has-text-muted">Crear cuenta</p>
+        </div>
+
+        <form (ngSubmit)="registrar()">
+          <div class="field mb-5">
+            <label class="label has-text-white">Nombre completo</label>
+            <div class="control">
+              <input class="input is-large" type="text" [(ngModel)]="usuario.nombre" name="nombre" required>
+            </div>
+          </div>
+
+          <div class="field mb-5">
+            <label class="label has-text-white">Email</label>
+            <div class="control">
+              <input class="input is-large" type="email" [(ngModel)]="usuario.email" name="email" required>
+            </div>
+          </div>
+
+          <div class="field mb-6">
+            <label class="label has-text-white">Contraseña</label>
+            <div class="control">
+              <input class="input is-large" type="password" [(ngModel)]="usuario.password" name="password" required minlength="6">
+            </div>
+          </div>
+
+          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando">
+            <strong *ngIf="!cargando">Crear Cuenta</strong>
+            <span *ngIf="cargando">Creando...</span>
+          </button>
+
+          <p class="has-text-centered mt-5 has-text-muted">
+            ¿Ya tenés cuenta? <a href="/login" style="color:var(--green);">Iniciar sesión</a>
+          </p>
+
+          <div class="notification is-danger mt-4" *ngIf="error" style="border-radius:12px;">{{ error }}</div>
+          <div class="notification is-success mt-4" *ngIf="exito" style="border-radius:12px;">
+            Cuenta creada! Ya podés iniciar sesión
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

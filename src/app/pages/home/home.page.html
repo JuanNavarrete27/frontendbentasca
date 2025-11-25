@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<!-- (acá iría el head si lo tuvieras, pero como solo me pasaste el body, sigo con eso) -->
+
+<body>
+
+<!-- HERO -->
+<section id="inicio" class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <h1>Viví el fútbol en su mejor cancha</h1>
+    <p>Cancha sintética iluminada • Torneos </p>
+    <div class="cta-row">
+      <a class="btn primary cta-btn" (click)="scrollTo('Agendar')">Reservar ahora</a>
+      <a class="btn outline cta-btn" (click)="scrollTo('Torneos')">Ver torneos</a>
+      <a routerLink="/tablas" class="btn outline cta-btn">Tablas</a>
+      <a (click)="scrollTo('contacto')" class="btn outline cta-btn">Contacto</a>
+      <a (click)="scrollTo('ubicacion')" class="btn outline cta-btn">Ubicación</a>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVAS -->
+<section id="reservas" class="section">
+  <div class="container">
+    <header class="section-header">
+      <h2>Reservas</h2>
+      <p>Alquiler por hora. De lunes a domingo.</p>
+    </header>
+
+    <div class="cards three">
+      <article class="card reserva-card" id="Agendar">
+        <div class="card-content">
+          <h3>Cancha F7</h3>
+          <p>Superficie sintética, arcos reglamentarios, red perimetral.</p>
+          <div class="card-footer">
+            <span class="price">$0,00/hora</span>
+            <a class="btn small primary action-btn" [routerLink]="['/agendar']">Reservar</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TORNEOS -->
+<section id="torneos" class="section alt">
+  <div class="container">
+    <header class="section-header">
+      <h2 id="Torneos">Próximos torneos</h2>
+      <p>Inscribí a tu equipo y competí en nuestras ligas.</p>
+    </header>
+
+    <div class="cards three tournaments">
+      <article class="card torneo-card">
+        <div class="card-header">
+          <h3>Anual BENTASCA</h3>
+          <span class="badge">Inscripciones abiertas</span>
+        </div>
+        <div class="card-content">
+          <ul class="meta">
+            <li><i class="fas fa-calendar"></i> Inicio: 15/12/2025</li>
+            <li><i class="fas fa-trophy"></i> Formato: Liga + Eliminatorias</li>
+            <li><i class="fas fa-users"></i> Categorías: Libre +35</li>
+          </ul>
+          <div class="card-footer">
+            <span class="price">$0,00 por equipo</span>
+            <a class="btn small primary" (click)="scrollTo('contacto')">Inscribirme</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="section">
+  <div class="container">
+    <header class="section-header">
+      <h2>Contacto</h2>
+      <p>Ruta 8, km 391 — Melo, Cerro Largo • WhatsApp: +598 91 227 577</p>
+    </header>
+
+    <form class="contact-form" name="contact" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="contact" />
+      
+      <!-- FORMULARIO CORREGIDO -->
+      <div class="form-row">
+        <input id="name" name="nombre" type="text" required />
+        <label for="name">Nombre</label>
+      </div>
+      <div class="form-row">
+        <input id="phonenumber" name="telefono" type="tel" required />
+        <label for="phonenumber">Número de Celular</label>
+      </div>
+      <div class="form-row">
+        <input id="email" name="email" type="email" required />
+        <label for="email">Email</label>
+      </div>
+      <div class="form-row">
+        <textarea id="message" name="mensaje" rows="4" required></textarea>
+        <label for="message">Mensaje</label>
+      </div>
+      
+      <button type="submit" class="btn primary">Enviar</button>
+    </form>
+  </div>
+</section>
+
+<!-- UBICACIÓN -->
+<section id="ubicacion" class="section alt">
+  <div class="container">
+    <header class="section-header">
+      <h2>¿Dónde estamos?</h2>
+      <p>Visítanos en nuestra ubicación</p>
+    </header>
+    
+    <div class="map-container">
+      <div class="map-info">
+        <h3>Centro de Entrenamiento Integral BENTASCA</h3>
+        <p><i class="fas fa-map-marker-alt"></i> Ruta 8, km 391 — Melo, Cerro Largo</p>
+        <p><i class="fas fa-phone"></i> <a href="tel:+59891227577">+598 91 227 577</a></p>
+        <p><i class="fas fa-clock"></i> Lunes a Domingo: 8:00 - 23:00 hs</p>
+      </div>
+      
+      <div class="map-wrapper">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3368.8686831909877!2d-54.13696882463597!3d-32.39588164428377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95092b000734b101%3A0xefe750118ca4c3b3!2sCentro%20de%20entrenamiento%20integral%20BENTASCA!5e0!3m2!1ses!2suy!4v1763759089012!5m2!1ses!2suy" 
+          width="100%" 
+          height="450" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+          class="google-map">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<main class="agendar-page">
+  <section class="section">
+    <div class="container">
+
+      <header class="section-header has-text-centered mb-6">
+        <h1 class="title is-2 has-text-white">Reservar Cancha</h1>
+        <p class="subtitle has-text-grey-lighter">
+          Seleccioná día y hora. Te confirmamos en 24hs por WhatsApp
+        </p>
+      </header>
+
+      <div class="columns is-centered">
+        <div class="column is-10">
+
+          <!-- CALENDARIO -->
+          <div class="box has-background-dark calendario-box">
+
+            <div class="calendar-header has-text-white has-background-black-ter p-4">
+              <!-- Botones más grandes y con borde blanco -->
+              <button 
+                class="button is-medium is-outlined is-white"
+                (click)="mesAnterior()"
+                [disabled]="esMesActual()">
+                ← Anterior
+              </button>
+
+              <h2 class="title is-5 has-text-centered has-text-white flex-1">
+                {{ meses[mesActual.getMonth()] }} {{ mesActual.getFullYear() }}
+              </h2>
+
+              <button
+                class="button is-medium is-outlined is-white"
+                (click)="mesSiguiente()"
+                [disabled]="esFuturoLejano()">
+                Siguiente →
+              </button>
+            </div>
+
+            <div class="calendar-grid p-4">
+              <div class="day-name has-text-grey-lighter" *ngFor="let dia of ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']">
+                {{ dia }}
+              </div>
+
+              <ng-container *ngFor="let cell of calendario">
+                <div *ngIf="cell" class="day-cell">
+                  <div class="day"
+                    [class.pasado]="esPasado(cell)"
+                    [class.hoy]="esHoy(cell)"
+                    [class.disponible]="esFuturo(cell)"
+                    [class.seleccionado]="esDiaSeleccionado(cell)"
+                    (click)="seleccionarDia(cell)">
+                    {{ cell.getDate() }}
+                  </div>
+                </div>
+                <div *ngIf="!cell" class="empty"></div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- HORARIOS -->
+          <div class="box has-background-dark mt-5 horarios-box" *ngIf="diaSeleccionado">
+            <h3 class="title is-5 has-text-white mb-4">
+              Horarios disponibles - {{ formatDate(diaSeleccionado) }}
+            </h3>
+
+            <div class="horarios-grid">
+              <button *ngFor="let hora of horariosDisponibles"
+                class="button is-medium horario-btn"
+                [class.is-success]="hora.disponible"
+                [class.is-danger]="!hora.disponible"
+                [disabled]="!hora.disponible"
+                (click)="seleccionarHora(hora.hora)">
+                {{ hora.hora }}
+                <span *ngIf="!hora.disponible" class="tag is-small ml-2">Ocupado</span>
+              </button>
+            </div>
+
+            <button class="button is-outlined is-white is-medium volver-btn mt-4"
+              (click)="diaSeleccionado = null; horaSeleccionada = null">
+              ← Volver al calendario
+            </button>
+          </div>
+
+          <!-- FORMULARIO -->
+          <div class="box has-background-dark mt-5 formulario-box" *ngIf="horaSeleccionada">
+            <h3 class="title is-5 has-text-white mb-4">Completá tus datos</h3>
+
+            <p class="has-text-grey-lighter mb-5">
+              Reserva: {{ formatDate(diaSeleccionado) }} a las {{ horaSeleccionada }}
+            </p>
+
+            <form (ngSubmit)="enviarReserva()">
+              <div class="field">
+                <label class="label has-text-white">Nombre completo *</label>
+                <div class="control">
+                  <input class="input is-medium" type="text" [(ngModel)]="reserva.nombre" name="nombre" required>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label has-text-white">Teléfono / WhatsApp *</label>
+                <div class="control">
+                  <input class="input is-medium" 
+                         type="tel" 
+                         [(ngModel)]="reserva.telefono" 
+                         name="telefono" 
+                         placeholder="Ej: 11 1234 5678" 
+                         required>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label has-text-white">Email</label>
+                <div class="control">
+                  <input class="input is-medium" type="email" [(ngModel)]="reserva.email" name="email">
+                </div>
+              </div>
+
+              <!-- BOTÓN CONFIRMAR RESERVA - GRANDE Y VERDE -->
+              <div class="field">
+                <div class="control">
+                  <button type="submit"
+                    class="button is-success is-large is-fullwidth confirmar-btn"
+                    [disabled]="cargando || !reserva.nombre || !reserva.telefono">
+                    <strong *ngIf="!cargando">Confirmar Reserva</strong>
+                    <span *ngIf="cargando">Enviando reserva...</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="notification is-success mt-4" *ngIf="exito">
+                ¡Reserva confirmada! Te contactamos en 24hs por WhatsApp
+              </div>
+              <div class="notification is-danger mt-4" *ngIf="error">
+                {{ error }}
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
