@@ -2,51 +2,64 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-10-mobile is-8-tablet is-6-desktop is-5-widescreen">
-        <div class="perfil-card">
+
+        <!-- Card -->
+        <div class="perfil-card"
+             [class.admin-card]="esAdmin"
+             [class.animate-admin-card]="animarAdminCard">
+
           <div class="card-content">
-            <!-- Foto de perfil -->
+
+            <!-- Encabezado ADMIN -->
+            <h2 *ngIf="esAdmin"
+                class="admin-title"
+                [class.admin-title-animate]="animarEncabezadoAdmin">
+              ⚡ PERFIL DE ADMINISTRADOR
+            </h2>
+
+            <!-- Foto -->
             <div class="foto-container">
               <div class="foto-wrapper">
-                <img 
-                  [src]="(usuario?.foto ? getAvatarUrl(usuario.foto) : defaultAvatar)"
-                  alt="Foto de perfil"
+                <img
+                  [src]="usuario?.foto ? getAvatarUrl(usuario.foto) : defaultAvatar"
                   class="foto-perfil"
                 >
               </div>
             </div>
 
-            <!-- Botón para cambiar avatar -->
+            <!-- Cambiar Avatar -->
             <div class="avatar-actions">
-              <button type="button" class="btn-cambiar-avatar" (click)="togglePicker()">
+              <button class="btn-cambiar-avatar" (click)="togglePicker()">
                 {{ mostrarPicker ? 'Cerrar selección de avatar' : 'Cambiar avatar' }}
               </button>
             </div>
 
-            <!-- Selector de avatar -->
+            <!-- Selector -->
             <div class="icon-picker" *ngIf="mostrarPicker">
               <p class="icon-picker-title">Seleccionar ícono de perfil</p>
+
               <div class="icon-grid">
-                <button 
-                  type="button"
-                  class="icon-button"
+                <button
                   *ngFor="let icono of iconos"
+                  class="icon-button"
                   [class.selected]="icono === iconoSeleccionado"
                   (click)="cambiarIcono(icono)"
-                  [disabled]="subiendo">
-                  <img [src]="getAvatarUrl(icono)" alt="Icono de perfil">
+                >
+                  <img [src]="getAvatarUrl(icono)" />
                 </button>
               </div>
             </div>
 
-            <!-- Datos del usuario -->
-            <h1 class="nombre-usuario">
-              {{ usuario?.nombre }} {{ usuario?.apellido }}
-            </h1>
-
+            <!-- Datos -->
+            <h1 class="nombre-usuario">{{ usuario?.nombre }} {{ usuario?.apellido }}</h1>
             <p class="email-usuario">{{ usuario?.email }}</p>
 
             <div class="rol-container">
-              <span class="rol-tag">Rol: {{ (usuario?.rol || 'usuario') | uppercase }}</span>
+              <span class="rol-tag"
+                    [class.rol-admin]="esAdmin"
+                    [class.animate-admin-role]="animarRolAdmin">
+                ROL: {{ usuario?.rol | uppercase }}
+              </span>
             </div>
 
             <div class="miembro-desde" *ngIf="usuario?.created_at">
@@ -55,28 +68,38 @@
 
             <!-- Acciones -->
             <div class="acciones">
+
               <a routerLink="/cambiar-password" class="btn-principal">
                 Cambiar Contraseña
               </a>
-              <button (click)="cerrarSesion()" class="btn-cerrar-sesion">
+
+              <a *ngIf="esAdmin"
+                 routerLink="/admin/tablas"
+                 class="btn-admin">
+                Editar Tablas
+              </a>
+
+              <button class="btn-cerrar-sesion" (click)="cerrarSesion()">
                 Cerrar Sesión
               </button>
+
             </div>
 
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </main>
 
-<!-- Animación de cierre de sesión -->
+<!-- Overlay logout -->
 <div class="logout-overlay" *ngIf="cerrandoSesion">
   <div class="logout-animation">
     <div class="logout-icon">
-      <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <svg width="80" height="80" viewBox="0 0 80 80">
         <circle cx="40" cy="40" r="40" fill="#e60000"/>
-        <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4"/>
       </svg>
     </div>
     <h2 class="logout-text">¡Hasta pronto!</h2>

@@ -16,12 +16,10 @@
           <div class="box has-background-dark calendario-box">
 
             <div class="calendar-header has-text-white has-background-black-ter p-4">
-              <!-- Botones más grandes y con borde blanco -->
               <button 
-                class="button is-medium is-outlined is-white"
+                class="button anterior"
                 (click)="mesAnterior()"
                 [disabled]="esMesActual()">
-                ← Anterior
               </button>
 
               <h2 class="title is-5 has-text-centered has-text-white flex-1">
@@ -29,10 +27,9 @@
               </h2>
 
               <button
-                class="button is-medium is-outlined is-white"
+                class="button siguiente"
                 (click)="mesSiguiente()"
                 [disabled]="esFuturoLejano()">
-                Siguiente →
               </button>
             </div>
 
@@ -45,7 +42,7 @@
                 <div *ngIf="cell" class="day-cell">
                   <div class="day"
                     [class.pasado]="esPasado(cell)"
-                    [class.hoy]="esHoy(cell)"
+                    [class.hoy]="esHoy(cell) && !esDiaSeleccionado(cell)"
                     [class.disponible]="esFuturo(cell)"
                     [class.seleccionado]="esDiaSeleccionado(cell)"
                     (click)="seleccionarDia(cell)">
@@ -57,84 +54,188 @@
             </div>
           </div>
 
-          <!-- HORARIOS -->
-          <div class="box has-background-dark mt-5 horarios-box" *ngIf="diaSeleccionado">
-            <h3 class="title is-5 has-text-white mb-4">
-              Horarios disponibles - {{ formatDate(diaSeleccionado) }}
-            </h3>
-
-            <div class="horarios-grid">
-              <button *ngFor="let hora of horariosDisponibles"
-                class="button is-medium horario-btn"
-                [class.is-success]="hora.disponible"
-                [class.is-danger]="!hora.disponible"
-                [disabled]="!hora.disponible"
-                (click)="seleccionarHora(hora.hora)">
-                {{ hora.hora }}
-                <span *ngIf="!hora.disponible" class="tag is-small ml-2">Ocupado</span>
-              </button>
-            </div>
-
-            <button class="button is-outlined is-white is-medium volver-btn mt-4"
-              (click)="diaSeleccionado = null; horaSeleccionada = null">
-              ← Volver al calendario
-            </button>
-          </div>
-
-          <!-- FORMULARIO -->
-          <div class="box has-background-dark mt-5 formulario-box" *ngIf="horaSeleccionada">
-            <h3 class="title is-5 has-text-white mb-4">Completá tus datos</h3>
-
-            <p class="has-text-grey-lighter mb-5">
-              Reserva: {{ formatDate(diaSeleccionado) }} a las {{ horaSeleccionada }}
-            </p>
-
-            <form (ngSubmit)="enviarReserva()">
-              <div class="field">
-                <label class="label has-text-white">Nombre completo *</label>
-                <div class="control">
-                  <input class="input is-medium" type="text" [(ngModel)]="reserva.nombre" name="nombre" required>
-                </div>
+          <!-- HORARIOS MODAL -->
+          <div class="horarios-modal-overlay" *ngIf="mostrarHorariosModal" (click)="cerrarHorariosModal()">
+            <div class="horarios-modal" (click)="$event.stopPropagation()">
+              <div class="horarios-modal-header">
+                <h3 class="title is-5 has-text-white mb-0">
+                  Horarios disponibles - {{ formatDate(diaSeleccionado) }}
+                </h3>
+                <button class="modal-close-btn" (click)="cerrarHorariosModal()">
+                  X
+                </button>
               </div>
 
-              <div class="field">
-                <label class="label has-text-white">Teléfono / WhatsApp *</label>
-                <div class="control">
-                  <input class="input is-medium" 
-                         type="tel" 
-                         [(ngModel)]="reserva.telefono" 
-                         name="telefono" 
-                         placeholder="Ej: 11 1234 5678" 
-                         required>
+              <div class="horarios-modal-content">
+                <div class="horarios-grid">
+                  <button *ngFor="let hora of horariosDisponibles; trackBy: trackByHora"
+                    class="button is-medium horario-btn"
+                    [class.is-success]="hora.disponible"
+                    [class.is-danger]="!hora.disponible"
+                    [class.is-selected]="hora.hora === horaSeleccionada"
+                    [disabled]="!hora.disponible"
+                    (click)="seleccionarHora(hora.hora)">
+                    {{ hora.hora }}
+                    <span *ngIf="!hora.disponible" class="tag is-small ml-2">Ocupado</span>
+                  </button>
                 </div>
-              </div>
 
-              <div class="field">
-                <label class="label has-text-white">Email</label>
-                <div class="control">
-                  <input class="input is-medium" type="email" [(ngModel)]="reserva.email" name="email">
-                </div>
-              </div>
-
-              <!-- BOTÓN CONFIRMAR RESERVA - GRANDE Y VERDE -->
-              <div class="field">
-                <div class="control">
-                  <button type="submit"
-                    class="button is-success is-large is-fullwidth confirmar-btn"
-                    [disabled]="cargando || !reserva.nombre || !reserva.telefono">
-                    <strong *ngIf="!cargando">Confirmar Reserva</strong>
-                    <span *ngIf="cargando">Enviando reserva...</span>
+                <div class="horarios-modal-actions" *ngIf="horaSeleccionada">
+                  <button class="button is-primary is-medium confirmar-hora-btn" (click)="confirmarHora()">
+                    Continuar con {{ horaSeleccionada }}
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div class="notification is-success mt-4" *ngIf="exito">
-                ¡Reserva confirmada! Te contactamos en 24hs por WhatsApp
+          <!-- FORMULARIO RESERVA MODAL -->
+          <div class="reserva-modal-overlay" *ngIf="mostrarReservaModal" (click)="cerrarReservaModal()">
+            <div class="reserva-modal" (click)="$event.stopPropagation()">
+              <div class="reserva-modal-header">
+                <h3 class="title is-5 has-text-white mb-0">
+                  Confirmar Reserva
+                </h3>
+                <button class="modal-close-btn" (click)="cerrarReservaModal()">
+                  X
+                </button>
               </div>
-              <div class="notification is-danger mt-4" *ngIf="error">
-                {{ error }}
+
+              <div class="reserva-modal-content">
+                <div class="reserva-info-card">
+                  <div class="reserva-detalles">
+                    <div class="detalle-item">
+                      <span class="detalle-label">
+                        <span class="bentasca-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                            <rect x="7" y="14" width="4" height="4" rx="1" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        Fecha:
+                      </span>
+                      <span class="detalle-value">{{ formatDate(diaSeleccionado) }}</span>
+                    </div>
+                    <div class="detalle-item">
+                      <span class="detalle-label">
+                        <span class="bentasca-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <line x1="12" y1="6" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="12" y1="12" x2="16" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          </svg>
+                        </span>
+                        Hora:
+                      </span>
+                      <span class="detalle-value">{{ horaSeleccionada }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <form class="reserva-form" [formGroup]="reservaForm" (ngSubmit)="confirmarReserva()">
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label class="form-label">Nombre</label>
+                      <input 
+                        type="text" 
+                        class="form-input" 
+                        formControlName="nombre"
+                        placeholder="Tu nombre"
+                        required>
+                      <div class="error-message" *ngIf="reservaForm.get('nombre')?.invalid && reservaForm.get('nombre')?.touched">
+                        <span *ngIf="reservaForm.get('nombre')?.errors?.['required']">El nombre es requerido</span>
+                        <span *ngIf="reservaForm.get('nombre')?.errors?.['pattern']">Solo se permiten letras y espacios</span>
+                      </div>
+                    </div>
+
+                    <div class="form-field">
+                      <label class="form-label">Apellido</label>
+                      <input 
+                        type="text" 
+                        class="form-input" 
+                        formControlName="apellido"
+                        placeholder="Tu apellido"
+                        required>
+                      <div class="error-message" *ngIf="reservaForm.get('apellido')?.invalid && reservaForm.get('apellido')?.touched">
+                        <span *ngIf="reservaForm.get('apellido')?.errors?.['required']">El apellido es requerido</span>
+                        <span *ngIf="reservaForm.get('apellido')?.errors?.['pattern']">Solo se permiten letras y espacios</span>
+                      </div>
+                    </div>
+
+                    <div class="form-field">
+                      <label class="form-label">Email</label>
+                      <input 
+                        type="email" 
+                        class="form-input" 
+                        formControlName="email"
+                        placeholder="tu@email.com"
+                        required>
+                      <div class="error-message" *ngIf="reservaForm.get('email')?.invalid && reservaForm.get('email')?.touched">
+                        <span *ngIf="reservaForm.get('email')?.errors?.['required']">El email es requerido</span>
+                        <span *ngIf="reservaForm.get('email')?.errors?.['pattern']">Ingresa un email válido</span>
+                      </div>
+                    </div>
+
+                    <div class="form-field">
+                      <label class="form-label">Número de Celular</label>
+                      <div class="telefono-input-group">
+                        <div class="prefijo-container">
+                          <div class="bandera-display">
+                            <img 
+                              [src]="getCurrentPais().flagImage" 
+                              [alt]="getCurrentPais().nombre"
+                              class="bandera-image"
+                              [attr.title]="getCurrentPais().nombre">
+                          </div>
+                          <div class="prefijo-display">
+                            {{ getCurrentPais().codigo }}
+                          </div>
+                          <select class="prefijo-select" formControlName="prefijo">
+                            <option *ngFor="let pais of paises" [value]="pais.codigo" [style.background-image]="'url(/assets/flags/' + pais.nombre.toLowerCase() + '.png)'" [style.background-size]="'20px 14px'" [style.background-repeat]="'no-repeat'" [style.background-position]="'10px center'">
+                              {{ pais.codigo }}
+                            </option>
+                          </select>
+                        </div>
+                        <input 
+                          type="tel" 
+                          class="form-input telefono-input" 
+                          formControlName="telefono"
+                          placeholder="99 123 456"
+                          required>
+                      </div>
+                      <div class="error-message" *ngIf="reservaForm.get('telefono')?.invalid && reservaForm.get('telefono')?.touched">
+                        <span *ngIf="reservaForm.get('telefono')?.errors?.['required']">El teléfono es requerido</span>
+                        <span *ngIf="reservaForm.get('telefono')?.errors?.['pattern']">Ingresa solo números (7-15 dígitos)</span>
+                      </div>
+                    </div>
+
+                    <div class="form-field full-width">
+                      <label class="form-label">Mensaje (opcional)</label>
+                      <textarea 
+                        class="form-input" 
+                        formControlName="mensaje"
+                        placeholder="Algún comentario o requerimiento especial..."
+                        rows="3"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="reserva-modal-actions">
+                    <button class="btn-volver" (click)="volverAHorarios()">
+                      Volver a Horarios
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="btn-confirmar"
+                      [disabled]="!reservaForm.valid || procesando">
+                      {{ procesando ? 'Procesando...' : 'Confirmar Reserva' }}
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
 
         </div>
@@ -142,4 +243,31 @@
     </div>
   </section>
 
+  <!-- Animación de reserva exitosa -->
+  <div class="reserva-success-overlay" *ngIf="exito">
+    <div class="reserva-success-animation">
+      <div class="reserva-success-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="40" fill="#20c35a"/>
+          <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="reserva-success-text">¡Reserva Confirmada!</h2>
+      <p class="reserva-success-subtext">Gracias por tu reserva</p>
+      <div class="reserva-success-details" *ngIf="diaSeleccionado && horaSeleccionada">
+        <p><span class="fecha">{{ formatDate(diaSeleccionado) }}</span> a las <span class="hora">{{ horaSeleccionada }}</span></p>
+        <p>Cancha: Fútbol 7</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón volver a reservas -->
+  <div class="volver-reservas-overlay" *ngIf="mostrarVolverReservasBtn">
+    <div class="volver-reservas-content">
+      <h3 class="volver-reservas-title">¿Quieres hacer otra reserva?</h3>
+      <button class="btn primary volver-reservas-btn" (click)="volverAReservas()">
+        Volver a Reservas
+      </button>
+    </div>
+  </div>
 </main>

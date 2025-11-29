@@ -5,10 +5,15 @@ import { ApiService } from '@services/api.service';
 
 interface Equipo {
   id: number;
-  equipo: string;
+  nombre: string;
   puntos: number;
-  goles_favor: number;
-  goles_contra: number;
+  pj: number;
+  pg: number;
+  pe: number;
+  pp: number;
+  gf: number;
+  gc: number;
+  dif: number;
   posicion: number | null;
 }
 
@@ -56,6 +61,7 @@ interface Equipo {
   `]
 })
 export class TablaClausuraPage implements OnInit {
+  
   tabla: Equipo[] = [];
   cargando = true;
 
@@ -64,8 +70,19 @@ export class TablaClausuraPage implements OnInit {
   ngOnInit() {
     this.api.getTablaClausura().subscribe({
       next: (data: Equipo[]) => {
-        // Ordenar por puntos si la DB no lo hace
-        this.tabla = data.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+
+        // Orden por puntos → diferencia
+        this.tabla = data.sort((a, b) => {
+          if (b.puntos !== a.puntos) return b.puntos - a.puntos;
+          return (b.dif || 0) - (a.dif || 0);
+        });
+
+        // Asignar posición si no viene desde backend
+        this.tabla = this.tabla.map((eq, index) => ({
+          ...eq,
+          posicion: index + 1
+        }));
+
         this.cargando = false;
       },
       error: (err) => {

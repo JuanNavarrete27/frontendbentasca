@@ -30,9 +30,13 @@ export class LoginPage {
     next: (res) => {
       this.cargando = false;
       this.exito = true;
-      // Guardamos el usuario completo para el header
-      localStorage.setItem('usuario', JSON.stringify(res.user));
-      // Redirigir después de la animación
+
+      // Guarda correctamente lo que devuelve el backend
+      if (res.usuario) {
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+      }
+
+      // Redirigir después de animación
       setTimeout(() => {
         window.location.href = '/perfil';
       }, 1500);
@@ -43,4 +47,5 @@ export class LoginPage {
     }
   });
 }
+
 }

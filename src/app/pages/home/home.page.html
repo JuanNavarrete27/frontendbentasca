@@ -11,11 +11,11 @@
     <h1>Viví el fútbol en su mejor cancha</h1>
     <p>Cancha sintética iluminada • Torneos </p>
     <div class="cta-row">
-      <a class="btn primary cta-btn" (click)="scrollTo('Agendar')">Reservar ahora</a>
-      <a class="btn outline cta-btn" (click)="scrollTo('Torneos')">Ver torneos</a>
+      <a class="btn primary cta-btn" (click)="scrollTo('reservas', $event)">Reservar ahora</a>
+      <a class="btn outline cta-btn" (click)="scrollTo('torneos', $event)">Ver torneos</a>
       <a routerLink="/tablas" class="btn outline cta-btn">Tablas</a>
-      <a (click)="scrollTo('contacto')" class="btn outline cta-btn">Contacto</a>
-      <a (click)="scrollTo('ubicacion')" class="btn outline cta-btn">Ubicación</a>
+      <a (click)="scrollTo('contacto', $event)" class="btn outline cta-btn">Contacto</a>
+      <a (click)="scrollTo('ubicacion', $event)" class="btn outline cta-btn">Ubicación</a>
     </div>
   </div>
 </section>
@@ -65,7 +65,7 @@
           </ul>
           <div class="card-footer">
             <span class="price">$0,00 por equipo</span>
-            <a class="btn small primary" (click)="scrollTo('contacto')">Inscribirme</a>
+            <a class="btn small primary" (click)="scrollTo('contacto', $event)">Inscribirme</a>
           </div>
         </div>
       </article>

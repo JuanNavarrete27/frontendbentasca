@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ApiService } from '@services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './perfil.page.html',
   styleUrls: ['./perfil.page.scss']
 })
@@ -22,13 +23,13 @@ export class PerfilPage implements OnInit {
   readonly iconos = ['avatar1.jpg', 'avatar2.jpg', 'avatar3.jpg', 'avatar4.jpg'];
   iconoSeleccionado: string | null = null;
 
-  // Avatar por defecto del backend
   readonly defaultAvatar = 'https://bentasca-backend2.onrender.com/avatars/avatar1.jpg';
 
-  // URL del avatar desde el backend
-  getAvatarUrl(filename: string): string {
-    return this.api.getAvatarUrl(filename);
-  }
+  // ADMIN
+  esAdmin = false;
+  animarAdminCard = false;
+  animarRolAdmin = false;
+  animarEncabezadoAdmin = false;
 
   constructor(
     private api: ApiService,
@@ -39,6 +40,10 @@ export class PerfilPage implements OnInit {
     this.cargarPerfil();
   }
 
+  getAvatarUrl(filename: string): string {
+    return this.api.getAvatarUrl(filename);
+  }
+
   cargarPerfil(): void {
     this.cargando = true;
     this.error = false;
@@ -47,18 +52,18 @@ export class PerfilPage implements OnInit {
       next: (data) => {
         this.usuario = data;
 
-        if (!this.usuario?.foto) {
-          this.iconoSeleccionado = this.iconos[0];
-        } else {
-          this.iconoSeleccionado = this.usuario.foto;
-        }
+        this.esAdmin = (this.usuario?.rol || '').toLowerCase() === 'admin';
+
+        this.iconoSeleccionado = this.usuario?.foto || this.iconos[0];
 
         this.cargando = false;
+
+        if (this.esAdmin) this.prepararAnimacionesAdmin();
       },
       error: (err) => {
-        console.warn('Error al cargar perfil:', err);
         this.error = true;
         this.cargando = false;
+
         if (err.status === 401) {
           this.api.logout();
           this.router.navigate(['/login']);
@@ -67,54 +72,62 @@ export class PerfilPage implements OnInit {
     });
   }
 
+  private prepararAnimacionesAdmin(): void {
+    setTimeout(() => {
+      this.animarAdminCard = true;
+      this.animarRolAdmin = true;
+      this.animarEncabezadoAdmin = true;
+    }, 150);
+  }
+
   togglePicker(): void {
     this.mostrarPicker = !this.mostrarPicker;
   }
 
   async cambiarIcono(icono: string): Promise<void> {
     try {
-      this.iconoSeleccionado = icono;
       this.subiendo = true;
+      this.iconoSeleccionado = icono;
 
-      const response = await this.api.actualizarFotoPerfil(icono).toPromise();
-      
-      if (this.usuario) {
-        this.usuario.foto = icono;
-        localStorage.setItem('usuario', JSON.stringify(this.usuario));
-        await this.notificarHeader();
-      }
-      
-      this.subiendo = false;
+      await this.api.actualizarFotoPerfil(icono).toPromise();
+
+      this.usuario.foto = icono;
+      localStorage.setItem('usuario', JSON.stringify(this.usuario));
+
+      await this.notificarHeader();
+
       this.mostrarPicker = false;
+      this.subiendo = false;
     } catch (error) {
-      console.error('Error al guardar ícono', error);
       this.iconoSeleccionado = this.usuario?.foto || this.iconos[0];
       this.subiendo = false;
     }
   }
 
   private async notificarHeader(): Promise<void> {
-    try {
-      localStorage.setItem('usuarioActualizado', Date.now().toString());
-      window.dispatchEvent(new Event('storage'));
-      const event = new CustomEvent('usuarioActualizado', {
-        detail: { usuario: this.usuario }
-      });
-      window.dispatchEvent(event);
-      this.usuario = { ...this.usuario };
-    } catch (error) {
-      console.error('Error al notificar actualización:', error);
-    }
+    localStorage.setItem('usuarioActualizado', Date.now().toString());
+    window.dispatchEvent(new Event('storage'));
+
+    const event = new CustomEvent('usuarioActualizado', {
+      detail: { usuario: this.usuario }
+    });
+    window.dispatchEvent(event);
+
+    this.usuario = { ...this.usuario };
   }
 
   cerrarSesion(): void {
     this.cerrandoSesion = true;
-    
-    // Mostrar animación y después cerrar sesión
+
     setTimeout(() => {
       this.api.logout();
       this.cerrandoSesion = false;
       this.router.navigate(['/']);
     }, 1500);
+  }
+
+  irAAdminTablas(): void {
+    if (!this.esAdmin) return;
+    this.router.navigate(['/admin/tablas']);
   }
 }

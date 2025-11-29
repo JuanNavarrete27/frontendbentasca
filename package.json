@@ -1,12 +1,12 @@
 {
   "name": "bentasca-angular",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build --configuration production"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^20.3.12",
     "@angular/common": "^20.3.12",
@@ -23,11 +23,9 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.10",
     "@angular/cli": "^20.3.10",
     "@angular/compiler-cli": "^20.3.12",
-    "@vitejs/plugin-vue": "^6.0.2",
-    "@vitejs/plugin-vue-jsx": "^5.1.2",
+    "@angular/build": "^20.3.10",
     "typescript": "~5.8.3"
   }
 }

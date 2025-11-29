@@ -9,6 +9,55 @@
   --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+// Logo con efecto hover simple
+.logo {
+  display: inline-block;
+  transition: all 0.3s var(--transition-smooth);
+
+  // 🔥 AGREGADO PARA EL BRILLO DEL LOBO
+  position: relative;
+
+  // (1) Silueta negra que brilla al hacer hover
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('assets/img/logo.png') center/contain no-repeat;
+    filter: brightness(0) contrast(1);  // deja el lobo completamente negro
+    opacity: 0;
+    transition: all 0.35s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  // FIN AGREGADO 🔥
+
+  img {
+    height: 50px;
+    width: auto;
+    transition: all 0.3s var(--transition-smooth);
+    filter: brightness(1);
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover {
+    transform: scale(1.1) translateY(-2px);
+
+    img {
+      filter: brightness(1.2) drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3))
+              drop-shadow(0 0 15px #00ff88); // 🔥 glow verde en el logo
+    }
+
+    // 🔥 Hace brillar la silueta del lobo
+    &::after {
+      opacity: 1;
+      filter: brightness(0)
+              drop-shadow(0 0 12px #00ff88)
+              drop-shadow(0 0 25px #00ff88);
+    }
+  }
+}
+
 // Sección del usuario
 .user-section {
   margin-left: auto;
@@ -46,7 +95,7 @@
   box-shadow: var(--elevation-1);
   transform-style: preserve-3d;
   transform: translateZ(0);
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -67,17 +116,17 @@
     border-color: var(--bentasca-green);
     color: white;
     text-shadow: var(--neon-glow);
-    
+
     &::before {
       opacity: 1;
     }
-    
+
     .user-icon {
       transform: rotate(10deg) scale(1.1);
       filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.8));
     }
   }
-  
+
   .user-icon {
     font-size: 18px;
     color: var(--bentasca-green);
@@ -115,40 +164,35 @@
   backdrop-filter: blur(8px);
   box-shadow: 0 4px 15px rgba(44, 62, 80, 0.25);
   transform: translateZ(0);
-  
-  // Estilo del ícono
+
   i {
     font-size: 16px;
     position: relative;
     z-index: 2;
     transition: all 0.3s ease;
-    
-    // Ícono usando Font Awesome
+
     &::before {
       content: '\f52b'; // Font Awesome door-open icon
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
     }
   }
-  
-  // Efecto hover
+
   &:hover {
     background: linear-gradient(45deg, #34495e, #2c3e50);
     transform: translateY(-2px) scale(1.02) translateZ(0);
     box-shadow: 0 8px 25px rgba(44, 62, 80, 0.35);
-    
+
     i {
       transform: translateX(2px);
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
   }
-  
-  // Estado activo
+
   &:active {
     transform: translateY(1px) scale(0.98);
   }
-  
-  // Overlay con gradiente
+
   &::before {
     content: '';
     position: absolute;
@@ -162,8 +206,7 @@
     transition: opacity 0.4s var(--transition-smooth);
     z-index: 1;
   }
-  
-  // Estilo del texto
+
   span {
     position: relative;
     z-index: 2;
@@ -173,9 +216,9 @@
 
 // Botón de login mejorado
 .login-btn {
-  background: #00ff64 !important; /* Forzar color verde */
+  background: #00ff64 !important;
   background: linear-gradient(45deg, #00ff64, #00cc52) !important;
-  color: #000000 !important; /* Asegurar texto negro */
+  color: #000000 !important;
   font-weight: 600;
   margin-top: -9px;
   padding: 12px 28px;
@@ -190,7 +233,7 @@
   cursor: pointer;
   z-index: 1;
   display: inline-block;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -204,12 +247,12 @@
     transition: opacity 0.4s var(--transition-smooth);
     z-index: -1;
   }
-  
+
   &:hover {
     transform: translateY(-2px) scale(1.03);
     box-shadow: 0 10px 30px rgba(0, 255, 100, 0.5) !important;
     background: linear-gradient(45deg, #00cc52, #00aa44) !important;
-    
+
     &::before {
       opacity: 1;
     }
@@ -264,7 +307,7 @@
 .logout-icon {
   margin-bottom: 1.5rem;
   animation: checkmark 0.8s ease-out;
-  
+
   svg {
     filter: drop-shadow(0 0 20px rgba(255, 68, 68, 0.6));
     animation: pulse 2s infinite;
@@ -286,12 +329,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes scaleIn {
@@ -318,12 +357,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 @keyframes slideUp {
@@ -342,12 +377,12 @@
   .user-actions {
     gap: 12px;
   }
-  
+
   .user-profile, .btn-logout {
     padding: 10px 18px;
     font-size: 13px;
   }
-  
+
   .login-btn {
     padding: 10px 20px;
     font-size: 14px;

@@ -8,22 +8,22 @@
           <p class="subtitle has-text-muted">Panel de administración</p>
         </div>
 
-        <form (ngSubmit)="login()">
+        <form #loginForm="ngForm" (ngSubmit)="login()">
           <div class="field mb-5">
             <label class="label has-text-white">Email</label>
             <div class="control">
-              <input class="input is-large" type="email" [(ngModel)]="credenciales.email" name="email" required>
+              <input class="input is-large" type="email" [(ngModel)]="credenciales.email" name="email" required email #email="ngModel">
             </div>
           </div>
 
           <div class="field mb-6">
             <label class="label has-text-white">Contraseña</label>
             <div class="control">
-              <input class="input is-large" type="password" [(ngModel)]="credenciales.password" name="password" required>
+              <input class="input is-large" type="password" [(ngModel)]="credenciales.password" name="password" required minlength="6" #password="ngModel">
             </div>
           </div>
 
-          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando">
+          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando || loginForm.invalid">
             <strong *ngIf="!cargando">Iniciar Sesión</strong>
             <span *ngIf="cargando">Entrando...</span>
           </button>

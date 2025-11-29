@@ -60,29 +60,39 @@
   height: 56px;
   font-size: 1.2rem;
   font-weight: 700;
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   border-radius: 16px;
   margin: 1.5rem 0 0;
   padding: 0 1.5rem;
-  background: #00ff64 !important;
-  color: #000000 !important;
+  background: #cccccc !important;
+  color: #666666 !important;
   border: none !important;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(32, 195, 90, 0.35);
+  cursor: not-allowed;
+  box-shadow: none !important;
   transition: all 0.3s ease;
   text-align: center;
   line-height: 56px;
   text-decoration: none;
   position: relative;
   overflow: hidden;
+  opacity: 0.8;
 
-  &:hover:not(:disabled) {
-    transform: translateY(-4px);
-    box-shadow: 0 15px 35px rgba(32, 195, 90, 0.5);
-    background: #00cc52 !important;
-  }
+  &:not(:disabled) {
+    background: var(--green) !important;
+    color: #000000 !important;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(32, 195, 90, 0.35);
+    opacity: 1;
 
-  &:active:not(:disabled) {
-    transform: translateY(-1px);
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(32, 195, 90, 0.5);
+      background: var(--green-dark) !important;
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
   }
 
   &[disabled] {
@@ -99,7 +109,8 @@
     position: relative;
     z-index: 1;
     font-size: 1.2rem;
-    color: #000000 !important;
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    color: inherit !important;
   }
 }
 

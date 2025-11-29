@@ -8,6 +8,5 @@ export const routes: Routes = [
   { path: 'tabla-clausura', loadComponent: () => import('../pages/tabla-clausura/tabla-clausura.page').then(m => m.TablaClausuraPage) },
   { path: 'tabla-goleadores', loadComponent: () => import('../pages/tabla-goleadores/tabla-goleadores.page').then(m => m.TablaGoleadoresPage) },
   { path: 'gracias', loadComponent: () => import('../pages/gracias/gracias.page').then(m => m.GraciasPage) },
-  { path: 'editar-tabla', loadComponent: () => import('../pages/editar-tabla/editar-tabla.page').then(m => m.EditarTablaPage) },
   { path: '**', redirectTo: '' }
 ];

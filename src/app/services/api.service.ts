@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -8,13 +8,12 @@ import { tap, catchError } from 'rxjs/operators';
 })
 export class ApiService {
 
-  // URL del backend en Render
   private baseUrl = 'https://bentasca-backend2.onrender.com';
 
   constructor(private http: HttpClient) {}
 
   // =====================================================
-  // AUTH – RUTAS SIN /api
+  // AUTH
   // =====================================================
 
   registrarUsuario(usuario: any): Observable<any> {
@@ -24,12 +23,8 @@ export class ApiService {
   login(credenciales: { email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/usuarios/login`, credenciales).pipe(
       tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-        }
-        if (res.usuario) {
-          localStorage.setItem('usuario', JSON.stringify(res.usuario));
-        }
+        if (res.token) localStorage.setItem('token', res.token);
+        if (res.user) localStorage.setItem('usuario', JSON.stringify(res.user));
       })
     );
   }
@@ -42,46 +37,149 @@ export class ApiService {
 
   cambiarPassword(actual: string, nueva: string): Observable<any> {
     return this.http.put<any>(
-      `${this.baseUrl}/change-password`,
+      `${this.baseUrl}/usuarios/change-password`,
       { actual, nueva },
       { headers: this.getAuthHeaders() }
     );
   }
 
   // =====================================================
-  // RUTAS CON /api
+  // TABLAS
   // =====================================================
 
   getTablaAnual(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/api/tablas/anual`);
+    return this.http.get<any[]>(`${this.baseUrl}/tablas/anual`);
   }
 
   getTablaClausura(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/api/tablas/clausura`);
+    return this.http.get<any[]>(`${this.baseUrl}/tablas/clausura`);
   }
 
+  crearEquipoAnual(equipo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/tablas/anual`, equipo, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  actualizarEquipoAnual(id: number, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/tablas/anual/${id}`, equipo, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  eliminarEquipoAnual(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/tablas/anual/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  crearEquipoClausura(equipo: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/tablas/clausura`, equipo, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  actualizarEquipoClausura(id: number, equipo: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/tablas/clausura/${id}`, equipo, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  eliminarEquipoClausura(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/tablas/clausura/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // =====================================================
+  // EVENTOS
+  // =====================================================
+
   getEventos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/api/eventos`);
+    return this.http.get<any[]>(`${this.baseUrl}/eventos`);
   }
 
   getEventoById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/api/eventos/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/eventos/${id}`);
   }
 
+  // =====================================================
+  // USUARIOS ADMIN
+  // =====================================================
+
   getUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/api/usuarios`);
+    return this.http.get<any[]>(`${this.baseUrl}/usuarios`, {
+      headers: this.getAuthHeaders()
+    });
   }
 
   getUsuarioById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/api/usuarios/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/usuarios/${id}`, {
+      headers: this.getAuthHeaders()
+    });
   }
+
+  // =====================================================
+  // GOLEADORES
+  // =====================================================
 
   getGoleadores(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/api/goleadores`);
+    return this.http.get<any[]>(`${this.baseUrl}/goleadores`);
   }
 
+  // =====================================================
+  // RESERVAS
+  // =====================================================
+
+  // Invitado
   crearReserva(reserva: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/api/reservas`, reserva);
+    return this.http.post<any>(`${this.baseUrl}/reservas/crear`, reserva);
+  }
+
+  // Usuario logueado → headers obligatorios
+  crearReservaConUsuario(reserva: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/reservas/crear-con-usuario`,
+      reserva,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  getReservasPorFecha(fecha: string): Observable<any[]> {
+    const params = new HttpParams().set('fecha', fecha);
+    console.log('Haciendo petición a:', `${this.baseUrl}/reservas?fecha=${fecha}`);
+    return this.http.get<any[]>(`${this.baseUrl}/reservas`, { params });
+  }
+
+  // ESTA RUTA NO EXISTE EN EL BACKEND → SE COMENTA
+  // getHorariosOcupados(fecha: string): Observable<string[]> {
+  //   const params = new HttpParams().set('fecha', fecha);
+  //   return this.http.get<string[]>(`${this.baseUrl}/reservas/ocupados`, { params });
+  // }
+
+  // =====================================================
+  // FOTO PERFIL
+  // =====================================================
+
+  getAvatarUrl(filename: string): string {
+    return `${this.baseUrl}/avatars/${filename}`;
+  }
+
+  actualizarFotoPerfil(foto: string): Observable<any> {
+    const nombreArchivo = foto.includes('/') ? foto.split('/').pop()! : foto;
+
+    return this.http.put<any>(
+      `${this.baseUrl}/usuarios/actualizar-foto`,
+      { foto: nombreArchivo },
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      tap(response => {
+        if (response?.usuario) {
+          localStorage.setItem('usuario', JSON.stringify(response.usuario));
+        }
+      }),
+      catchError((error: any) => throwError(() => error))
+    );
   }
 
   // =====================================================
@@ -90,62 +188,11 @@ export class ApiService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
-  }
-
-  // =====================================================
-  // FOTO DE PERFIL - AVATARES DEL BACKEND
-  // =====================================================
-
-  // URL del avatar desde el backend
-  getAvatarUrl(filename: string): string {
-    return `${this.baseUrl}/avatars/${filename}`;
-  }
-
-  actualizarFotoPerfil(foto: string): Observable<any> {
-    // Que solo mande 'avatar1.jpg', etc.
-    const nombreArchivo = foto.includes('/') ? foto.split('/').pop()! : foto;
-
-    const url = `${this.baseUrl}/usuarios/actualizar-foto`;
-
-    console.log('🔄 Enviando actualización de foto hacia:', url);
-    console.log('📁 Archivo enviado:', nombreArchivo);
-
-    return this.http.put<any>(
-      url,
-      { foto: nombreArchivo },
-      {
-        headers: this.getAuthHeaders()
-      }
-    ).pipe(
-      tap(response => {
-        console.log('✅ Respuesta servidor actualizar-foto:', response);
-
-        // Actualizar usuario en localStorage si viene
-        if (response?.usuario) {
-          localStorage.setItem('usuario', JSON.stringify(response.usuario));
-        }
-
-        // Actualizar token si viene
-        if (response?.token) {
-          localStorage.setItem('token', response.token);
-        }
-      }),
-      catchError(error => {
-        console.error('❌ Error al actualizar foto:', {
-          status: error.status,
-          mensaje: error.message,
-          url: error.url
-        });
-        return throwError(() => error);
-      })
-    );
   }
 }

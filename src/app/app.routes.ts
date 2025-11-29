@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
 
@@ -28,11 +29,11 @@ export const routes: Routes = [
     canMatch: [authGuard]
   },
 
-  // ==================== ADMIN (opcional, protegida) ====================
+  // ==================== ADMIN (protegida) ====================  
   { 
-    path: 'editar-tabla', 
-    loadComponent: () => import('./pages/editar-tabla/editar-tabla.page').then(m => m.EditarTablaPage),
-    canMatch: [authGuard]
+    path: 'admin/tablas', 
+    loadComponent: () => import('./pages/admin-tablas/admin-tablas.page').then(m => m.AdminTablasPage),
+    // Temporalmente sin guard para probar
   },
 
   // ==================== 404 → HOME ====================

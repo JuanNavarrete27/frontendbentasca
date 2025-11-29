@@ -1,0 +1,199 @@
+<main class="admin-container">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-12">
+        
+        <!-- Header -->
+        <div class="admin-header">
+          <h1 class="admin-title">
+            <span class="title-part">Panel</span>
+            <span class="title-part">de</span>
+            <span class="title-part">Administración</span>
+          </h1>
+          <p class="admin-subtitle">Gestionar tablas de posiciones</p>
+          <div class="admin-badge">
+            <span class="badge-icon">⚡</span>
+            <span class="badge-text">MODO ADMIN</span>
+          </div>
+        </div>
+
+        <!-- Selector de tabla -->
+        <div class="tabla-selector">
+          <button 
+            class="tabla-btn" 
+            [class.active]="tablaSeleccionada === 'anual'"
+            (click)="seleccionarTabla('anual')">
+            Tabla Anual
+          </button>
+
+          <button 
+            class="tabla-btn" 
+            [class.active]="tablaSeleccionada === 'clausura'"
+            (click)="seleccionarTabla('clausura')">
+            Tabla Clausura
+          </button>
+        </div>
+
+        <!-- Botón agregar -->
+        <div class="actions-header">
+          <button class="btn-agregar" (click)="mostrarFormularioAgregar()" [disabled]="cargando">
+            <span class="icon">+</span> 
+            <span class="btn-text">AGREGAR EQUIPO</span>
+            <span class="btn-glow"></span>
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div class="error-message" *ngIf="error">
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="formulario-card" *ngIf="mostrandoFormulario">
+          <div class="card-content">
+
+            <h3 class="form-title">
+              {{ editandoEquipo ? 'Editar Equipo' : 'Nuevo Equipo' }}
+            </h3>
+
+            <form [formGroup]="equipoForm" (ngSubmit)="guardarEquipo()">
+
+              <div class="form-grid">
+
+                <!-- EQUIPO -->
+                <div class="form-group">
+                  <label>Equipo *</label>
+                  <input type="text" class="form-input" formControlName="equipo" required>
+                </div>
+
+                <!-- PUNTOS -->
+                <div class="form-group">
+                  <label>Puntos</label>
+                  <input type="number" class="form-input" formControlName="puntos" min="0">
+                </div>
+
+                <!-- PJ -->
+                <div class="form-group">
+                  <label>PJ</label>
+                  <input type="number" class="form-input" formControlName="pj" min="0">
+                </div>
+
+                <!-- PG -->
+                <div class="form-group">
+                  <label>PG</label>
+                  <input type="number" class="form-input" formControlName="pg" min="0">
+                </div>
+
+                <!-- PE -->
+                <div class="form-group">
+                  <label>PE</label>
+                  <input type="number" class="form-input" formControlName="pe" min="0">
+                </div>
+
+                <!-- PP -->
+                <div class="form-group">
+                  <label>PP</label>
+                  <input type="number" class="form-input" formControlName="pp" min="0">
+                </div>
+
+                <!-- GOLES FAVOR -->
+                <div class="form-group">
+                  <label>GF</label>
+                  <input type="number" class="form-input" formControlName="goles_favor" min="0" (input)="calcularDiferencia()">
+                </div>
+
+                <!-- GOLES CONTRA -->
+                <div class="form-group">
+                  <label>GC</label>
+                  <input type="number" class="form-input" formControlName="goles_contra" min="0" (input)="calcularDiferencia()">
+                </div>
+
+                <!-- DIF -->
+                <div class="form-group">
+                  <label>DIF</label>
+                  <input type="number" class="form-input" formControlName="dif" readonly>
+                </div>
+
+                <!-- POSICION -->
+                <div class="form-group">
+                  <label>Posición</label>
+                  <input type="number" class="form-input" formControlName="posicion" min="1">
+                </div>
+
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-guardar" [disabled]="equipoForm.invalid || cargando">
+                  {{ editandoEquipo ? 'Actualizar' : 'Guardar' }}
+                </button>
+
+                <button type="button" class="btn-cancelar" (click)="cancelarFormulario()">
+                  Cancelar
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- LISTA DE EQUIPOS -->
+        <div class="equipos-container">
+
+          <div class="loading" *ngIf="cargando && !mostrandoFormulario">
+            <p>Cargando equipos...</p>
+          </div>
+
+          <!-- TABLA -->
+          <div class="equipos-table" *ngIf="!cargando && equipos.length > 0">
+
+            <div class="table-header">
+              <div class="header-cell">Pos</div>
+              <div class="header-cell">Equipo</div>
+              <div class="header-cell">PTS</div>
+              <div class="header-cell">PJ</div>
+              <div class="header-cell">PG</div>
+              <div class="header-cell">PE</div>
+              <div class="header-cell">PP</div>
+              <div class="header-cell">GF</div>
+              <div class="header-cell">GC</div>
+              <div class="header-cell">DIF</div>
+              <div class="header-cell">Acciones</div>
+            </div>
+
+            <div class="table-row" *ngFor="let equipo of equipos; let i = index">
+              
+              <div class="table-cell position">{{ equipo.posicion || (i + 1) }}</div>
+              <div class="table-cell team-name">{{ equipo.equipo }}</div>
+              <div class="table-cell">{{ equipo.puntos }}</div>
+              <div class="table-cell">{{ equipo.pj }}</div>
+              <div class="table-cell">{{ equipo.pg }}</div>
+              <div class="table-cell">{{ equipo.pe }}</div>
+              <div class="table-cell">{{ equipo.pp }}</div>
+              <div class="table-cell">{{ equipo.goles_favor }}</div>
+              <div class="table-cell">{{ equipo.goles_contra }}</div>
+
+              <div class="table-cell">{{ getDiferencia(equipo) }}</div>
+
+              <div class="table-cell actions">
+                <button class="btn-editar" (click)="mostrarFormularioEditar(equipo)">
+                  <span class="btn-icon">✏️</span>
+                  <span class="btn-tooltip">Editar</span>
+                </button>
+                <button class="btn-eliminar" (click)="eliminarEquipo(equipo)">
+                  <span class="btn-icon">🗑️</span>
+                  <span class="btn-tooltip">Eliminar</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="!cargando && equipos.length === 0">
+            <p>No hay equipos en esta tabla. ¡Agrega el primero!</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

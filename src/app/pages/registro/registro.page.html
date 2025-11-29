@@ -8,29 +8,74 @@
           <p class="subtitle has-text-muted">Crear cuenta</p>
         </div>
 
-        <form (ngSubmit)="registrar()">
+        <form [formGroup]="registroForm" (ngSubmit)="registrar()">
           <div class="field mb-5">
             <label class="label has-text-white">Nombre completo</label>
             <div class="control">
-              <input class="input is-large" type="text" [(ngModel)]="usuario.nombre" name="nombre" required>
+              <input class="input is-large" type="text" formControlName="nombre" placeholder="Tu nombre completo" required>
+              <div class="error-message" *ngIf="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched">
+                <span *ngIf="registroForm.get('nombre')?.errors?.['required']">El nombre es requerido</span>
+                <span *ngIf="registroForm.get('nombre')?.errors?.['pattern']">Solo se permiten letras y espacios</span>
+              </div>
             </div>
           </div>
 
           <div class="field mb-5">
             <label class="label has-text-white">Email</label>
             <div class="control">
-              <input class="input is-large" type="email" [(ngModel)]="usuario.email" name="email" required>
+              <input class="input is-large" type="email" formControlName="email" placeholder="tu@email.com" required>
+              <div class="error-message" *ngIf="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
+                <span *ngIf="registroForm.get('email')?.errors?.['required']">El email es requerido</span>
+                <span *ngIf="registroForm.get('email')?.errors?.['pattern']">Ingresa un email válido</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field mb-5">
+            <label class="label has-text-white">Teléfono</label>
+            <div class="telefono-input-group">
+              <div class="prefijo-container">
+                <div class="bandera-display">
+                  <img 
+                    [src]="getCurrentPais().flagImage" 
+                    [alt]="getCurrentPais().nombre"
+                    class="bandera-image"
+                    [attr.title]="getCurrentPais().nombre">
+                </div>
+                <div class="prefijo-display">
+                  {{ getCurrentPais().codigo }}
+                </div>
+                <select class="prefijo-select" formControlName="prefijo">
+                  <option *ngFor="let pais of paises" [value]="pais.codigo">
+                    {{ pais.codigo }}
+                  </option>
+                </select>
+              </div>
+              <input 
+                class="input is-large telefono-input" 
+                type="tel" 
+                formControlName="telefono"
+                placeholder="99 123 456"
+                required>
+            </div>
+            <div class="error-message telefono-error" *ngIf="registroForm.get('telefono')?.invalid && registroForm.get('telefono')?.touched">
+              <span *ngIf="registroForm.get('telefono')?.errors?.['required']">El teléfono es requerido</span>
+              <span *ngIf="registroForm.get('telefono')?.errors?.['pattern']">Ingresa solo números (7-15 dígitos)</span>
             </div>
           </div>
 
           <div class="field mb-6">
             <label class="label has-text-white">Contraseña</label>
             <div class="control">
-              <input class="input is-large" type="password" [(ngModel)]="usuario.password" name="password" required minlength="6">
+              <input class="input is-large" type="password" formControlName="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+              <div class="error-message" *ngIf="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
+                <span *ngIf="registroForm.get('password')?.errors?.['required']">La contraseña es requerida</span>
+                <span *ngIf="registroForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres</span>
+              </div>
             </div>
           </div>
 
-          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando">
+          <button type="submit" class="btn primary is-fullwidth" style="height:56px; font-size:1.2rem;" [disabled]="cargando || registroForm.invalid">
             <strong *ngIf="!cargando">Crear Cuenta</strong>
             <span *ngIf="cargando">Creando...</span>
           </button>
@@ -40,10 +85,25 @@
           </p>
 
           <div class="notification is-danger mt-4" *ngIf="error" style="border-radius:12px;">{{ error }}</div>
-          <div class="notification is-success mt-4" *ngIf="exito" style="border-radius:12px;">
-            Cuenta creada! Ya podés iniciar sesión
-          </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Animación de registro exitoso -->
+  <div class="registro-success-overlay" *ngIf="exito">
+    <div class="registro-success-animation">
+      <div class="registro-success-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="40" fill="var(--green)"/>
+          <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="registro-success-text">¡Cuenta Creada!</h2>
+      <p class="registro-success-subtext">Redirigiendo al inicio de sesión...</p>
+      <div class="registro-success-details" *ngIf="usuario.email">
+        <p>Bienvenido a Bentasca</p>
+        <p><span class="email">{{ usuario.email }}</span></p>
       </div>
     </div>
   </div>

@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';           // ← NECESARIO para *ngIf
+import { CommonModule } from '@angular/common';
 import { TableLigaComponent } from '@components/table-liga/table-liga.component';
 import { ApiService } from '@services/api.service';
 
 interface Equipo {
   id: number;
-  equipo: string;
+  nombre: string;
   puntos: number;
-  goles_favor: number;
-  goles_contra: number;
+  pj: number;
+  pg: number;
+  pe: number;
+  pp: number;
+  gf: number;
+  gc: number;
+  dif: number;
   posicion: number | null;
 }
 
@@ -16,8 +21,8 @@ interface Equipo {
   selector: 'app-tabla-anual',
   standalone: true,
   imports: [
-    CommonModule,           // ← Esto arregla los errores de *ngIf, che
-    TableLigaComponent      // ← Tu componente de tabla, rey
+    CommonModule,
+    TableLigaComponent
   ],
   template: `
     <main>
@@ -59,6 +64,7 @@ interface Equipo {
   `]
 })
 export class TablaAnualPage implements OnInit {
+
   tabla: Equipo[] = [];
   cargando = true;
 
@@ -67,7 +73,19 @@ export class TablaAnualPage implements OnInit {
   ngOnInit() {
     this.api.getTablaAnual().subscribe({
       next: (data: Equipo[]) => {
-        this.tabla = data.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+
+        // Ordenar por puntos (y opcionalmente diferencia)
+        this.tabla = data.sort((a, b) => {
+          if (b.puntos !== a.puntos) return b.puntos - a.puntos;
+          return (b.dif || 0) - (a.dif || 0);
+        });
+
+        // Calcular posición si no viene desde backend
+        this.tabla = this.tabla.map((eq, i) => ({
+          ...eq,
+          posicion: i + 1
+        }));
+
         this.cargando = false;
       },
       error: (err) => {
