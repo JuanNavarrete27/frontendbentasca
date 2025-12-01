@@ -7,7 +7,8 @@ import { ApiService } from '@services/api.service';
   selector: 'app-cambiar-password',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './cambiar-password.page.html'
+  templateUrl: './cambiar-password.page.html',
+  styleUrls: ['./cambiar-password.page.scss']
 })
 export class CambiarPasswordPage {
   passwords = { actual: '', nueva: '', repetir: '' };

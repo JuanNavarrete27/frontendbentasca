@@ -1,6 +1,15 @@
 <header class="site-header">
   <div class="container header-inner">
-    <a routerLink="/" class="logo">
+
+    <!-- LOGO con eventos para PC/Móvil -->
+    <a 
+      routerLink="/" 
+      class="logo"
+      #logoElement
+      (mouseenter)="onLogoHover(true)"
+      (mouseleave)="onLogoHover(false)"
+      (touchstart)="onLogoTouchStart($event)"
+    >
       <img src="assets/img/logo.png" alt="BENTASCA">
     </a>
 
@@ -14,14 +23,21 @@
         <li><a routerLink="/agendar" class="nav-link" (click)="closeMenu()">Reservas</a></li>
         <li><a routerLink="/torneos" class="nav-link" (click)="closeMenu()">Torneos</a></li>
         <li><a routerLink="/tablas" class="nav-link" (click)="closeMenu()">Tablas</a></li>
-        <li><a href="#contacto" class="nav-link" (click)="closeMenu(); $event.preventDefault(); scrollTo('contacto')">Contacto</a></li>
+        <li>
+          <a href="#contacto" class="nav-link" 
+             (click)="closeMenu(); $event.preventDefault(); scrollTo('contacto')">
+            Contacto
+          </a>
+        </li>
 
         <!-- USUARIO LOGUEADO -->
         <li class="user-section" *ngIf="hayToken; else loginBtn">
           <div class="user-actions">
             <a routerLink="/perfil" class="user-profile" (click)="closeMenu()">
               <i class="fas fa-user-circle user-icon"></i>
-              <span class="user-name">{{ usuario?.nombre?.split(' ')[0] || 'Mi perfil' }}</span>
+              <span class="user-name">
+                {{ usuario?.nombre?.split(' ')[0] || 'Mi perfil' }}
+              </span>
             </a>
             <button class="btn-logout" (click)="logout(); $event.stopPropagation()">
               <i class="fas fa-sign-out-alt"></i>
@@ -38,6 +54,7 @@
             </a>
           </li>
         </ng-template>
+
       </ul>
     </nav>
   </div>

@@ -9,17 +9,25 @@ import { Subscription, filter } from 'rxjs';
   standalone: true,
   selector: 'app-header',
   imports: [CommonModule, RouterLink],
-  templateUrl: './header.component.html',     // ← ahora usa archivos externos, che
-  styleUrls: ['./header.component.scss']       // ← estilos externos, como se hace en el Uruguay
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+
   @ViewChild('navLinks') navLinks!: ElementRef;
   @ViewChild('navToggle') navToggle!: ElementRef;
-  
+
+  // 👇 nuevo: referencia al logo
+  @ViewChild('logoElement') logoElement!: ElementRef;
+
   usuario: any = null;
   hayToken = false;
   private routerSub!: Subscription;
   cerrandoSesion = false;
+
+  // 👇 nuevo: detección de touch + timeout para animación glow
+  isTouchDevice = false;
+  private logoGlowTimeout: any;
 
   constructor(
     private el: ElementRef,
@@ -28,18 +36,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+
+    // 🔥 Detectar si es dispositivo táctil
+    this.isTouchDevice =
+      'ontouchstart' in window ||
+      (navigator as any).maxTouchPoints > 0 ||
+      (navigator as any).msMaxTouchPoints > 0;
+
     this.actualizarEstado();
 
     this.routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => this.actualizarEstado());
 
-    // Cuando cambia localStorage en otras pestañas
     window.addEventListener('storage', () => this.actualizarEstado());
-    // Evento desde PerfilPage para actualizar al toque
     window.addEventListener('usuarioActualizado', () => this.actualizarEstado());
 
-    // Aplicar blur según el scroll
     this.actualizarBlurPorScroll();
   }
 
@@ -47,22 +59,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const token = localStorage.getItem('token');
     this.hayToken = !!token;
 
-    // Ver si hay que actualizar el usuario
     const usuarioActualizado = localStorage.getItem('usuarioActualizado');
-    
-    // Siempre cargar del localStorage primero
+
     const usuarioGuardado = localStorage.getItem('usuario');
     if (usuarioGuardado) {
       this.usuario = JSON.parse(usuarioGuardado);
     }
 
-    // Si hay token pero no hay usuario, o hay que actualizar
     if (token && (!this.usuario || usuarioActualizado)) {
       this.api.getMiPerfil().subscribe({
         next: (data) => {
           this.usuario = data;
           localStorage.setItem('usuario', JSON.stringify(data));
-          // Limpiar la bandera de actualización
           localStorage.removeItem('usuarioActualizado');
         },
         error: () => {
@@ -73,7 +81,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       });
     } else if (!token) {
-      // Si no hay token, limpiar todo
       this.usuario = null;
       this.hayToken = false;
     }
@@ -83,7 +90,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.navToggle.nativeElement.classList.toggle('active');
     this.navLinks.nativeElement.classList.toggle('open');
     
-    // Poner blur cuando se abre el menú móvil
     if (this.navLinks.nativeElement.classList.contains('open')) {
       document.body.classList.add('menu-open');
     } else {
@@ -91,10 +97,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Si falla la imagen del avatar
   handleImageError(event: Event) {
     const img = event.target as HTMLImageElement;
-    // Si falla, usar avatar por defecto
     img.src = 'assets/img/default-avatar.png';
   }
 
@@ -106,11 +110,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
-    // Cerrar menú si se hace click afuera
     if (this.navLinks && this.navToggle) {
-      const isClickInside = this.navLinks.nativeElement.contains(event.target) || 
-                          this.navToggle.nativeElement.contains(event.target);
-      
+      const isClickInside =
+        this.navLinks.nativeElement.contains(event.target) ||
+        this.navToggle.nativeElement.contains(event.target);
+
       if (!isClickInside && this.navLinks.nativeElement.classList.contains('open')) {
         this.closeMenu();
       }
@@ -133,7 +137,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.cerrandoSesion = true;
     this.closeMenu();
     
-    // Mostrar animación y después cerrar sesión
     setTimeout(() => {
       this.api.logout();
       this.usuario = null;
@@ -148,7 +151,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Asegurar el estado inicial
     this.actualizarEstadoHeader();
   }
 
@@ -168,10 +170,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const scrollPosition = window.scrollY;
     
     if (scrollPosition >= heroHeight) {
-      // Cambiar a sticky después del hero
       header.classList.add('sticky-mode');
     } else {
-      // Mantener fixed mientras está en el hero
       header.classList.remove('sticky-mode');
     }
   }
@@ -183,5 +183,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } else {
       document.body.classList.remove('blur-bg');
     }
+  }
+
+  // ============================================================
+  // 🔥 CONTROL REAL DEL EFECTO HOVER / TAP DEL LOGO
+  // ============================================================
+
+  onLogoHover(enter: boolean) {
+    if (this.isTouchDevice) return; // en móviles no usamos hover
+
+    const el = this.logoElement?.nativeElement as HTMLElement;
+    if (!el) return;
+
+    if (enter) {
+      el.classList.add('logo-glow');
+    } else {
+      el.classList.remove('logo-glow');
+    }
+  }
+
+  onLogoTouchStart(event: TouchEvent) {
+    if (!this.isTouchDevice) return;
+
+    const el = this.logoElement?.nativeElement as HTMLElement;
+    if (!el) return;
+
+    if (this.logoGlowTimeout) clearTimeout(this.logoGlowTimeout);
+
+    el.classList.add('logo-glow');
+
+    this.logoGlowTimeout = setTimeout(() => {
+      el.classList.remove('logo-glow');
+    }, 600);
   }
 }

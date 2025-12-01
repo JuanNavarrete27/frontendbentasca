@@ -11,25 +11,24 @@
 
 // Logo con efecto hover simple
 .logo {
+  margin-left: -60px;
   display: inline-block;
   transition: all 0.3s var(--transition-smooth);
 
   // 🔥 AGREGADO PARA EL BRILLO DEL LOBO
   position: relative;
 
-  // (1) Silueta negra que brilla al hacer hover
   &::after {
     content: '';
     position: absolute;
     inset: 0;
     background: url('assets/img/logo.png') center/contain no-repeat;
-    filter: brightness(0) contrast(1);  // deja el lobo completamente negro
+    filter: brightness(0) contrast(1);
     opacity: 0;
     transition: all 0.35s ease;
     z-index: 1;
     pointer-events: none;
   }
-  // FIN AGREGADO 🔥
 
   img {
     height: 50px;
@@ -44,11 +43,11 @@
     transform: scale(1.1) translateY(-2px);
 
     img {
-      filter: brightness(1.2) drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3))
-              drop-shadow(0 0 15px #00ff88); // 🔥 glow verde en el logo
+      filter: brightness(1.2)
+              drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3))
+              drop-shadow(0 0 15px #00ff88);
     }
 
-    // 🔥 Hace brillar la silueta del lobo
     &::after {
       opacity: 1;
       filter: brightness(0)
@@ -172,7 +171,7 @@
     transition: all 0.3s ease;
 
     &::before {
-      content: '\f52b'; // Font Awesome door-open icon
+      content: '\f52b';
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
     }
@@ -274,7 +273,6 @@
   50% { transform: translateY(-4px) translateZ(0); }
 }
 
-// Aplicar animación flotante
 .user-profile, .btn-logout, .login-btn {
   animation: float 6s var(--transition-smooth) infinite;
 }
@@ -356,11 +354,6 @@
   }
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
 @keyframes slideUp {
   from {
     transform: translateY(30px);
@@ -387,4 +380,106 @@
     padding: 10px 20px;
     font-size: 14px;
   }
+}
+
+/* ============================================================
+   🔥 FIX: Efecto del logo en móviles (clase agregada desde TS)
+   ============================================================ */
+
+.logo.logo-glow {
+  transform: scale(1.1) translateY(-2px);
+
+  img {
+    filter: brightness(1.2)
+            drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3))
+            drop-shadow(0 0 15px #00ff88);
+  }
+
+  &::after {
+    opacity: 1;
+    filter: brightness(0)
+            drop-shadow(0 0 12px #00ff88)
+            drop-shadow(0 0 25px #00ff88);
+  }
+}
+
+/* Evita hover trabado en móviles */
+@media (hover: none) and (pointer: coarse) {
+  .logo:hover {
+    transform: none !important;
+
+    img {
+      filter: brightness(1) !important;
+    }
+
+    &::after {
+      opacity: 0 !important;
+      filter: none !important;
+    }
+  }
+}
+/* ============================================
+   FIX — Quitar el resaltado azul en móviles
+   ============================================ */
+
+.logo, 
+.logo img {
+  -webkit-tap-highlight-color: transparent !important;
+  tap-highlight-color: transparent !important;
+  outline: none !important;
+}
+/* ============================================================
+   🔥 FIX REAL — Glow fuerte y duradero en móviles
+   ============================================================ */
+
+/* Duración extendida del glow en móvil */
+@keyframes logoGlowMobile {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.08);
+    filter: brightness(1.25)
+            drop-shadow(0 0 12px #00ff88)
+            drop-shadow(0 0 28px #00ff88);
+  }
+  60% {
+    transform: scale(1.12);
+    filter: brightness(1.3)
+            drop-shadow(0 0 18px #00ff88)
+            drop-shadow(0 0 40px #00ff88);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* Clase que activa el glow móvil */
+.logo.logo-glow img {
+  animation: logoGlowMobile 1s ease-out !important;
+}
+
+.logo.logo-glow::after {
+  opacity: 1 !important;
+  filter: brightness(0)
+          drop-shadow(0 0 18px #00ff88)
+          drop-shadow(0 0 40px #00ff88) !important;
+  transition: opacity 0.25s ease-out !important;
+}
+
+/* Evita que el hover cancele el glow en móviles */
+@media (hover: none) and (pointer: coarse) {
+  .logo:hover {
+    transform: none !important;
+  }
+}
+
+/* Quitar highlight azul */
+.logo, 
+.logo img {
+  -webkit-tap-highlight-color: transparent !important;
+  tap-highlight-color: transparent !important;
+  outline: none !important;
 }

@@ -36,12 +36,13 @@ export class ApiService {
   }
 
   cambiarPassword(actual: string, nueva: string): Observable<any> {
-    return this.http.put<any>(
-      `${this.baseUrl}/usuarios/change-password`,
-      { actual, nueva },
-      { headers: this.getAuthHeaders() }
-    );
-  }
+  return this.http.put<any>(
+    `${this.baseUrl}/usuarios/cambiar-password`,
+    { actual, nueva },
+    { headers: this.getAuthHeaders() }
+  );
+}
+
 
   // =====================================================
   // TABLAS

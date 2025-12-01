@@ -591,11 +591,14 @@ p{color:var(--muted); margin:.25rem 0 1rem}
 
 @media (max-width: 991px) {
   .map-info {
-    text-align: center;
+    text-align: left;
   }
   
   .map-info p {
-    justify-content: center;
+    justify-content: left;
+  }
+  .map-info h3 {
+    text-align: center;
   }
 }
 
@@ -629,5 +632,17 @@ p{color:var(--muted); margin:.25rem 0 1rem}
   .contact-form{
     padding:2rem 1.5rem;
     margin:2rem auto 0;
+  }
+}
+/* ===========================================================
+   🔥 FIX MOBILE – Alinear contenido al centro en celulares
+   =========================================================== */
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;      /* usar el ancho total real */
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding-left: 1rem !important;   /* margen suave simétrico */
+    padding-right: 1rem !important;
   }
 }
