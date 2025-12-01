@@ -485,49 +485,222 @@
 }
 
 /* ============================================================
-   🔥 BOTÓN CERRAR (X) — ADMIN STYLE (MÓVILES)
+   MOBILE MENU STYLES
    ============================================================ */
 @media (max-width: 860px) {
-  .close-menu-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+  /* Prevent body scroll when menu is open */
+  body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
 
-    /* Apariencia estilo ADMIN-TABLES */
-    background: rgba(10, 14, 23, 0.85); /* mismo panel */
-    border: 1px solid rgba(0, 255, 136, 0.5);
-    backdrop-filter: blur(8px);
+  /* Mobile menu container */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bentasca-dark);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    -webkit-overflow-scrolling: auto;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
 
-    color: #00ff88;
-    font-size: 22px;
-    font-weight: bold;
+  /* Show menu when open class is added */
+  .nav-links.open {
+    display: flex;
+  }
 
-    border-radius: 12px; /* rectangular con bordes suaves, admin-style */
-    width: 42px;
-    height: 42px;
+  /* Menu items */
+  .nav-links > li {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 12px 0;
+    list-style: none;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.4s ease forwards;
+    flex: 0 0 auto;
+  }
 
-    /* Centrado del "X" */
+  /* Staggered animation for menu items */
+  .nav-links > li:nth-child(1) { animation-delay: 0.1s; }
+  .nav-links > li:nth-child(2) { animation-delay: 0.15s; }
+  .nav-links > li:nth-child(3) { animation-delay: 0.2s; }
+  .nav-links > li:nth-child(4) { animation-delay: 0.25s; }
+  .nav-links > li:nth-child(5) { animation-delay: 0.3s; }
+  .user-section { 
+    animation-delay: 0.35s !important;
+    margin-top: 20px;
+  }
+
+  /* Navigation links */
+  .nav-link {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 16px 24px;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    height: 100%;
+    width: 100%;
+  }
 
-    /* Glow admin */
-    box-shadow: 0 0 14px rgba(0,255,136,0.25);
+  .nav-link:hover {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--bentasca-green);
+  }
 
+  /* User section */
+  .user-section {
+    width: 100%;
+    max-width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.4s ease forwards;
+    margin-top: auto;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .user-actions {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+
+  /* FONDO CON PALETA ADMIN-TABLES EN MÓVIL */
+  .user-profile,
+  .btn-logout {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    font-size: 15px;
+    min-height: 48px;
+    align-items: center;
+
+    background: linear-gradient(135deg, #08ff7f, #00cc52);
+    border-radius: 14px;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 22px rgba(0, 255, 100, 0.3);
+    color: #000;
+    font-weight: 700;
+  }
+
+  .user-profile .user-icon,
+  .btn-logout i {
+    color: #000;
+  }
+
+  .user-profile:hover,
+  .btn-logout:hover {
+    background: linear-gradient(135deg, #00cc52, #009944);
+    color: #fff;
+  }
+
+  /* Close button — chico, redondo, alineado a la derecha */
+  .close-menu-btn {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    background: linear-gradient(135deg, #08ff7f, #00cc52);
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+
+    color: #000;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 50%;
+    width: 38px !important;
+    height: 38px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 14px rgba(0, 255, 136, 0.25);
     transition: all 0.25s ease;
-    z-index: 9999;
+    z-index: 1001;
     cursor: pointer;
+    outline: none;
+    opacity: 0;
+    animation: fadeIn 0.3s ease 0.2s forwards;
   }
 
   .close-menu-btn:hover {
-    background: rgba(0, 255, 136, 0.12);
-    border-color: #00ff88;
-    box-shadow: 0 0 18px rgba(0,255,136,0.45);
-    transform: scale(1.08);
+    background: linear-gradient(135deg, #00cc52, #009944);
+    color: #fff;
+    box-shadow: 0 0 18px rgba(0, 255, 136, 0.45);
+    transform: scale(1.05);
   }
 
   .close-menu-btn:active {
-    transform: scale(0.92);
+    transform: scale(0.95);
+  }
+
+  /* Menu overlay */
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 999;
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-links.open + .menu-overlay {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Ensure menu items take full width */
+  .nav-links {
+    > * {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
