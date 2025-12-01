@@ -4,7 +4,13 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ApiService } from '@services/api.service';
 import { Router } from '@angular/router';
 
@@ -117,7 +123,7 @@ export class AdminTablasPage implements OnInit {
       pp: equipo.pp,
       goles_favor: equipo.goles_favor,
       goles_contra: equipo.goles_contra,
-      dif: equipo.dif,
+      dif: equipo.dif ?? (equipo.goles_favor - equipo.goles_contra),
       posicion: equipo.posicion
     });
 
@@ -138,7 +144,11 @@ export class AdminTablasPage implements OnInit {
 
     this.cargando = true;
 
-    const body = this.equipoForm.value;
+    const body = {
+      ...this.equipoForm.value,
+      dif: (this.equipoForm.get('goles_favor')?.value || 0) -
+           (this.equipoForm.get('goles_contra')?.value || 0)
+    };
 
     let peticion;
 
@@ -185,15 +195,14 @@ export class AdminTablasPage implements OnInit {
     });
   }
 
-  // CALCULAR DIFERENCIA PARA EL FORM
+  // CALCULAR DIFERENCIA PARA FORMULARIO
   calcularDiferencia() {
     const gf = this.equipoForm.get('goles_favor')?.value || 0;
     const gc = this.equipoForm.get('goles_contra')?.value || 0;
-
     this.equipoForm.get('dif')?.setValue(gf - gc);
   }
 
-  // DIF EN LISTA
+  // CALCULAR DIF EN LISTA
   getDiferencia(equipo: any) {
     return (equipo.goles_favor || 0) - (equipo.goles_contra || 0);
   }

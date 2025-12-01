@@ -9,28 +9,31 @@ import { CommonModule } from '@angular/common';
     <div class="table-wrapper">
       <h3 *ngIf="titulo" class="tabla-titulo">{{ titulo }}</h3>
 
-      <table class="tabla-liga" *ngIf="data.length > 0">
-        <thead>
-          <tr>
-            <th *ngFor="let header of headers">{{ header }}</th>
-          </tr>
-        </thead>
+      <!-- 🔥 Wrapper de scroll horizontal -->
+      <div class="tabla-scroll">
+        <table class="tabla-liga" *ngIf="data.length > 0">
+          <thead>
+            <tr>
+              <th *ngFor="let header of headers">{{ header }}</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr *ngFor="let equipo of data; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ equipo.equipo }}</td>
-            <td>{{ equipo.puntos }}</td>
-            <td>{{ equipo.pj }}</td>
-            <td>{{ equipo.pg }}</td>
-            <td>{{ equipo.pe }}</td>
-            <td>{{ equipo.pp }}</td>
-            <td>{{ equipo.goles_favor }}</td>
-            <td>{{ equipo.goles_contra }}</td>
-            <td>{{ equipo.dif ?? (equipo.goles_favor - equipo.goles_contra) }}</td>
-          </tr>
-        </tbody>
-      </table>
+          <tbody>
+            <tr *ngFor="let equipo of data; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ equipo.equipo }}</td>
+              <td>{{ equipo.puntos }}</td>
+              <td>{{ equipo.pj }}</td>
+              <td>{{ equipo.pg }}</td>
+              <td>{{ equipo.pe }}</td>
+              <td>{{ equipo.pp }}</td>
+              <td>{{ equipo.goles_favor }}</td>
+              <td>{{ equipo.goles_contra }}</td>
+              <td>{{ equipo.dif ?? (equipo.goles_favor - equipo.goles_contra) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <p *ngIf="!data.length" class="no-data">
         No hay datos para mostrar en esta tabla.
@@ -38,14 +41,35 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
-    .tabla-liga {
+    .table-wrapper {
       width: 100%;
+    }
+
+    /* ======================================================
+       🔥 SCROLL HORIZONTAL QUE NO ROMPE EL DISEÑO
+       ====================================================== */
+    .tabla-scroll {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 6px; /* evita corte del glow */
+      border-radius: 12px;
+      background: #0a0a0a; /* se mueve junto con la tabla */
+    }
+
+    /* ======================================================
+       🔥 LA TABLA — AHORA SE EXPANDE Y NO SE ROMPE
+       ====================================================== */
+    .tabla-liga {
+      width: max-content !important;
+      min-width: 100%;
       border-collapse: collapse;
       color: #ffffff;
       background: #111;
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid #0fa95833;
+      table-layout: auto;
     }
 
     th {
@@ -54,6 +78,7 @@ import { CommonModule } from '@angular/common';
       padding: 12px;
       font-weight: 700;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     td {
@@ -62,6 +87,7 @@ import { CommonModule } from '@angular/common';
       color: #fff;
       font-weight: 500;
       border-bottom: 1px solid #0fa95822;
+      white-space: nowrap; /* 🔥 evita que nada baje de línea */
     }
 
     tr:nth-child(even) {
@@ -90,7 +116,7 @@ export class TableLigaComponent {
   @Input() data: any[] = [];
   @Input() titulo: string = '';
 
-  // 🔥 Ahora coincide con la DB real (11 columnas)
+  // 🔥 Coincide con las columnas reales de DB
   headers = [
     'Pos',
     'Equipo',

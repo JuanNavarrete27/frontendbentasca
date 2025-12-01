@@ -8,10 +8,7 @@
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background:
       radial-gradient(circle at 20% 80%, rgba(0, 255, 100, 0.12) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(0, 180, 90, 0.14) 0%, transparent 50%),
@@ -67,6 +64,17 @@
   50% { background-position: 100% 50%; }
 }
 
+.admin-subtitle {
+  font-size: 1.2rem;
+  background: linear-gradient(90deg, #7dffb3, #e5ffe6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+}
+
 .admin-badge {
   display: inline-flex;
   align-items: center;
@@ -106,22 +114,17 @@
   100% { transform: rotate(360deg); }
 }
 
-.admin-subtitle {
-  font-size: 1.2rem;
-  background: linear-gradient(90deg, #7dffb3, #e5ffe6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 400;
-  position: relative;
-  z-index: 1;
-}
+/*-------------------------------------------------
+  BOTONES SUPERIORES
+-------------------------------------------------*/
 
 .tabla-selector {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .tabla-btn {
@@ -143,10 +146,8 @@
   &::before {
     content: '';
     position: absolute;
-    top: 0;
+    inset: 0;
     left: -100%;
-    width: 100%;
-    height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s;
   }
@@ -174,6 +175,8 @@
 .actions-header {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .btn-agregar {
@@ -208,33 +211,16 @@
 
   .btn-glow {
     position: absolute;
-    top: 0;
+    inset: 0;
     left: -100%;
-    width: 100%;
-    height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
     transition: left 0.5s;
     z-index: 1;
   }
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
-
   &:hover:not(:disabled) {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 255, 120, 0.5);
-
-    &::before {
-      left: 100%;
-    }
 
     .btn-glow {
       left: 100%;
@@ -252,6 +238,10 @@
   50% { transform: translateY(-3px); }
 }
 
+/*-------------------------------------------------
+  FORMULARIO
+-------------------------------------------------*/
+
 .error-message {
   background: rgba(255, 68, 68, 0.1);
   border: 1px solid rgba(255, 68, 68, 0.3);
@@ -261,10 +251,6 @@
   text-align: center;
   color: #ff7777;
 }
-
-/*-------------------------------------------------
-  FORMULARIO
--------------------------------------------------*/
 
 .formulario-card {
   background: rgba(0, 255, 100, 0.04);
@@ -307,8 +293,6 @@
   background-clip: text;
   margin-bottom: 1.5rem;
   text-align: center;
-  position: relative;
-  z-index: 1;
 }
 
 .form-grid {
@@ -343,8 +327,6 @@
   border-radius: 8px;
   font-size: 0.95rem;
   transition: 0.3s;
-  position: relative;
-  z-index: 1;
 
   &:focus {
     outline: none;
@@ -359,12 +341,6 @@
     color: #88bfa0;
     cursor: not-allowed;
   }
-}
-
-.error-text {
-  color: #ff7777;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
 }
 
 .form-actions {
@@ -384,28 +360,10 @@
   transition: 0.3s;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-    transition: left 0.5s;
-  }
 
   &:hover:not(:disabled) {
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 20px rgba(0, 255, 120, 0.4);
-
-    &::before {
-      left: 100%;
-    }
   }
 
   &:disabled {
@@ -432,46 +390,61 @@
 }
 
 /*-------------------------------------------------
-  TABLA ADMIN — 11 COLUMNAS
+  TABLA ADMIN — 11 COLUMNAS + SCROLL
 -------------------------------------------------*/
 
 .equipos-container {
   margin-top: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
+/* 🔥 Card que scrollea horizontalmente en móvil */
 .equipos-table {
   background: rgba(0, 255, 100, 0.04);
   border: 1px solid rgba(0, 255, 120, 0.28);
   border-radius: 16px;
-  overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 255, 120, 0.22);
   backdrop-filter: blur(10px);
   position: relative;
-  z-index: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  padding-bottom: 4px; /* que no se corte la sombra */
+
+  /* scrollbar sutil */
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 120, 0.35);
+    border-radius: 999px;
+  }
 }
 
-/* HEADER con 11 columnas */
-.table-header {
+/* Header y filas: mismo grid + mínimo ancho para que pueda scrollear */
+.table-header,
+.table-row {
   display: grid;
   grid-template-columns:
-    60px     /* POS */
-    2fr      /* EQUIPO */
-    60px     /* PTS */
-    60px     /* PJ */
-    60px     /* PG */
-    60px     /* PE */
-    60px     /* PP */
-    60px     /* GF */
-    60px     /* GC */
-    60px     /* DIF */
-    120px;   /* ACCIONES */
-
-  background: linear-gradient(135deg, rgba(0, 255, 100, 0.18), rgba(0, 180, 90, 0.18));
-  border-bottom: 2px solid #00ff64;
-  position: relative;
-  z-index: 1;
+    60px      /* POS */
+    2fr       /* EQUIPO */
+    60px      /* PTS */
+    60px      /* PJ */
+    60px      /* PG */
+    60px      /* PE */
+    60px      /* PP */
+    60px      /* GF */
+    60px      /* GC */
+    60px      /* DIF */
+    120px;    /* ACCIONES */
+  min-width: 760px;
 }
 
+/* HEADER */
 .header-cell {
   padding: 1rem 0.5rem;
   background: linear-gradient(135deg, #00ff64, #c9ffd9);
@@ -482,38 +455,20 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   text-align: center;
-  position: relative;
-  z-index: 1;
 }
 
-/* FILAS con las mismas 11 columnas */
+/* FILAS */
 .table-row {
-  display: grid;
-  grid-template-columns:
-    60px
-    2fr
-    60px
-    60px
-    60px
-    60px
-    60px
-    60px
-    60px
-    60px
-    120px;
-
   border-bottom: 1px solid rgba(0, 255, 120, 0.12);
-  transition: 0.3s;
-  position: relative;
-  z-index: 1;
-
-  &:hover {
-    background: rgba(0, 255, 100, 0.08);
-    transform: translateX(5px);
-  }
+  transition: 0.2s;
 
   &:last-child {
     border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(0, 255, 100, 0.08);
+    transform: translateX(3px);
   }
 }
 
@@ -526,7 +481,7 @@
   justify-content: center;
 
   &.position {
-    background: linear-gradient(135deg, rgba(0, 255, 100, 0.12), rgba(0, 180, 90, 0.18));
+    background: linear-gradient(135deg, rgba(0, 255, 100, 0.16), rgba(0, 180, 90, 0.22));
     color: #021309;
     font-weight: 700;
   }
@@ -536,94 +491,151 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #ffffff !important;
-    opacity: 1 !important;
   }
 
   &.actions {
-    gap: 0.5rem;
-  }
-}
-
-.btn-editar,
-.btn-eliminar {
-  background: transparent;
-  border: 1px solid rgba(234, 255, 242, 0.25);
-  border-radius: 6px;
-  padding: 0.4rem;
-  cursor: pointer;
-  transition: 0.3s;
-  font-size: 0.9rem;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-
-  .btn-icon {
-    display: block;
-    font-size: 1rem;
-  }
-
-  .btn-tooltip {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
+    justify-content: center;
+    gap: 0.4rem;
     white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
   }
-
-  &:hover {
-    transform: translateY(-2px) scale(1.1);
-
-    .btn-tooltip {
-      opacity: 1;
-      bottom: -30px;
-    }
-  }
-}
-
-.btn-editar:hover {
-  background: rgba(0, 255, 120, 0.22);
-  border-color: #00ff64;
-  box-shadow: 0 4px 12px rgba(0, 255, 120, 0.35);
-}
-
-.btn-eliminar:hover {
-  background: rgba(255, 68, 68, 0.2);
-  border-color: #ff4444;
-  box-shadow: 0 4px 12px rgba(255, 68, 68, 0.35);
 }
 
 /*-------------------------------------------------
-  RESPONSIVE AJUSTADO A 11 COLUMNAS
+  BOTONES ACCIÓN — ICONOS ESTILO BENTASCA
 -------------------------------------------------*/
 
+.btn-editar,
+.btn-eliminar {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+  border: 1px solid rgba(234, 255, 242, 0.25);
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: 0.25s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* El icono se maneja como "contenedor" para SVG / emoji / img */
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  line-height: 1;
+  text-align: center;
+  font-size: 15px; /* si usás emoji o texto */
+}
+
+/* Si luego querés usar SVG, podés cambiar el .btn-icon a img o usar background-image */
+
+.btn-editar {
+  border-color: rgba(0, 255, 120, 0.6);
+  box-shadow: 0 0 0 0 rgba(0, 255, 120, 0.3);
+
+  &:hover {
+    background: rgba(0, 255, 120, 0.16);
+    box-shadow: 0 0 12px rgba(0, 255, 120, 0.55);
+    transform: translateY(-1px) scale(1.05);
+  }
+}
+
+.btn-eliminar {
+  border-color: rgba(255, 68, 68, 0.7);
+
+  &:hover {
+    background: rgba(255, 68, 68, 0.18);
+    box-shadow: 0 0 12px rgba(255, 68, 68, 0.55);
+    transform: translateY(-1px) scale(1.05);
+  }
+}
+
+/* tooltips chiquitos, pero que no rompan en móvil */
+.btn-tooltip {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #eafff3;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s;
+}
+
+.btn-editar:hover .btn-tooltip,
+.btn-eliminar:hover .btn-tooltip {
+  opacity: 1;
+  bottom: -28px;
+}
+
+/*-------------------------------------------------
+  ESTADOS VACÍOS / LOADING
+-------------------------------------------------*/
+
+.loading,
+.empty-state {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #a8ffce;
+  font-size: 0.95rem;
+}
+
+/*-------------------------------------------------
+  RESPONSIVE TABLA — SOLO ESTA VERSIÓN (SIN DUPLICADOS)
+-------------------------------------------------*/
+
+/* Tablets */
 @media (max-width: 768px) {
+  .admin-title {
+    font-size: 2.3rem;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
   .table-header,
   .table-row {
     grid-template-columns:
       30px
       1fr
       30px 30px 30px 30px 30px 30px 30px 30px
-      70px;
+      80px;
+    min-width: 700px;
   }
 }
 
+/* Celulares */
 @media (max-width: 480px) {
+  .admin-container {
+    padding: 1.5rem 0.6rem;
+  }
+
+  .admin-title {
+    font-size: 2rem;
+  }
+
+  .card-content {
+    padding: 1.25rem;
+  }
+
   .table-header,
   .table-row {
     grid-template-columns:
       24px
       1fr
       24px 24px 24px 24px 24px 24px 24px 24px
-      55px;
+      70px;
+    min-width: 640px;
   }
 
   .header-cell,
@@ -631,22 +643,14 @@
     padding: 0.6rem 0.2rem;
     font-size: 0.75rem;
   }
-}
 
-/*-------------------------------------------------
-  RESPONSIVE
--------------------------------------------------*/
-
-@media (max-width: 768px) {
-  .table-header,
-  .table-row {
-    grid-template-columns: 40px 1fr 40px 40px 40px 40px 80px;
+  .btn-editar,
+  .btn-eliminar {
+    width: 28px;
+    height: 28px;
   }
-}
 
-@media (max-width: 480px) {
-  .table-header,
-  .table-row {
-    grid-template-columns: 30px 1fr 30px 30px 30px 30px 60px;
+  .btn-tooltip {
+    display: none; /* para que no molesten en pantallas muy chicas */
   }
 }
