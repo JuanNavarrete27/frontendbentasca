@@ -483,3 +483,59 @@
   tap-highlight-color: transparent !important;
   outline: none !important;
 }
+
+/* ============================================================
+   🔥 BOTÓN CERRAR (X) — ADMIN STYLE (MÓVILES)
+   ============================================================ */
+@media (max-width: 860px) {
+  .close-menu-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    /* Apariencia estilo ADMIN-TABLES */
+    background: rgba(10, 14, 23, 0.85); /* mismo panel */
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    backdrop-filter: blur(8px);
+
+    color: #00ff88;
+    font-size: 22px;
+    font-weight: bold;
+
+    border-radius: 12px; /* rectangular con bordes suaves, admin-style */
+    width: 42px;
+    height: 42px;
+
+    /* Centrado del "X" */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Glow admin */
+    box-shadow: 0 0 14px rgba(0,255,136,0.25);
+
+    transition: all 0.25s ease;
+    z-index: 9999;
+    cursor: pointer;
+  }
+
+  .close-menu-btn:hover {
+    background: rgba(0, 255, 136, 0.12);
+    border-color: #00ff88;
+    box-shadow: 0 0 18px rgba(0,255,136,0.45);
+    transform: scale(1.08);
+  }
+
+  .close-menu-btn:active {
+    transform: scale(0.92);
+  }
+}
+
+/* ============================================================
+   DESKTOP: mantener como está (oculto)
+   ============================================================ */
+@media (min-width: 861px) {
+  .close-menu-btn {
+    display: none;
+  }
+}

@@ -14,24 +14,35 @@
     </a>
 
     <nav class="nav">
+
+      <!-- BOTÓN HAMBURGUESA -->
       <button #navToggle class="nav-toggle" (click)="toggleMenu()" aria-label="Abrir menú">
         <span></span><span></span><span></span>
       </button>
 
+      <!-- OVERLAY (se estiliza después) -->
+      <div class="menu-overlay" (click)="closeMenu()"></div>
+
+      <!-- MENÚ DESPLEGABLE -->
       <ul #navLinks class="nav-links">
+
+        <!-- BOTÓN CERRAR (X) — se posiciona con CSS -->
+        <button class="close-menu-btn" (click)="closeMenu()">✕</button>
+
         <li><a routerLink="/" class="nav-link" (click)="closeMenu()">Inicio</a></li>
         <li><a routerLink="/agendar" class="nav-link" (click)="closeMenu()">Reservas</a></li>
         <li><a routerLink="/torneos" class="nav-link" (click)="closeMenu()">Torneos</a></li>
         <li><a routerLink="/tablas" class="nav-link" (click)="closeMenu()">Tablas</a></li>
+
         <li>
-          <a href="#contacto" class="nav-link" 
+          <a href="#contacto" class="nav-link"
              (click)="closeMenu(); $event.preventDefault(); scrollTo('contacto')">
             Contacto
           </a>
         </li>
 
         <!-- USUARIO LOGUEADO -->
-        <li class="user-section" *ngIf="hayToken; else loginBtn">
+        <li *ngIf="hayToken; else loginBtn" class="user-section">
           <div class="user-actions">
             <a routerLink="/perfil" class="user-profile" (click)="closeMenu()">
               <i class="fas fa-user-circle user-icon"></i>
@@ -39,6 +50,7 @@
                 {{ usuario?.nombre?.split(' ')[0] || 'Mi perfil' }}
               </span>
             </a>
+
             <button class="btn-logout" (click)="logout(); $event.stopPropagation()">
               <i class="fas fa-sign-out-alt"></i>
               <span>Cerrar sesión</span>
@@ -56,6 +68,7 @@
         </ng-template>
 
       </ul>
+
     </nav>
   </div>
 </header>

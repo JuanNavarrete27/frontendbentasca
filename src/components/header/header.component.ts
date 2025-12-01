@@ -16,8 +16,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @ViewChild('navLinks') navLinks!: ElementRef;
   @ViewChild('navToggle') navToggle!: ElementRef;
-
-  // 👇 nuevo: referencia al logo
   @ViewChild('logoElement') logoElement!: ElementRef;
 
   usuario: any = null;
@@ -25,7 +23,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private routerSub!: Subscription;
   cerrandoSesion = false;
 
-  // 👇 nuevo: detección de touch + timeout para animación glow
   isTouchDevice = false;
   private logoGlowTimeout: any;
 
@@ -36,8 +33,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-
-    // 🔥 Detectar si es dispositivo táctil
     this.isTouchDevice =
       'ontouchstart' in window ||
       (navigator as any).maxTouchPoints > 0 ||
@@ -60,8 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.hayToken = !!token;
 
     const usuarioActualizado = localStorage.getItem('usuarioActualizado');
-
     const usuarioGuardado = localStorage.getItem('usuario');
+
     if (usuarioGuardado) {
       this.usuario = JSON.parse(usuarioGuardado);
     }
@@ -89,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleMenu() {
     this.navToggle.nativeElement.classList.toggle('active');
     this.navLinks.nativeElement.classList.toggle('open');
-    
+
     if (this.navLinks.nativeElement.classList.contains('open')) {
       document.body.classList.add('menu-open');
     } else {
@@ -107,7 +102,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.navLinks.nativeElement.classList.remove('open');
     document.body.classList.remove('menu-open');
   }
-  
+
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (this.navLinks && this.navToggle) {
@@ -126,6 +121,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (element) {
       const headerOffset = window.innerWidth > 860 ? 100 : 80;
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+
       window.scrollTo({
         top: elementPosition - headerOffset,
         behavior: 'smooth'
@@ -136,7 +132,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
     this.cerrandoSesion = true;
     this.closeMenu();
-    
+
     setTimeout(() => {
       this.api.logout();
       this.usuario = null;
@@ -163,12 +159,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private actualizarEstadoHeader() {
     const header = this.el.nativeElement.querySelector('.site-header');
     const hero = document.querySelector('.hero');
-    
+
     if (!hero) return;
-    
+
     const heroHeight = hero.clientHeight;
     const scrollPosition = window.scrollY;
-    
+
     if (scrollPosition >= heroHeight) {
       header.classList.add('sticky-mode');
     } else {
@@ -185,12 +181,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ============================================================
-  // 🔥 CONTROL REAL DEL EFECTO HOVER / TAP DEL LOGO
-  // ============================================================
-
   onLogoHover(enter: boolean) {
-    if (this.isTouchDevice) return; // en móviles no usamos hover
+    if (this.isTouchDevice) return;
 
     const el = this.logoElement?.nativeElement as HTMLElement;
     if (!el) return;

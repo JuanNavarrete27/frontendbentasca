@@ -624,7 +624,9 @@ p{color:var(--muted); margin:.25rem 0 1rem}
     display:none;
     z-index:9999;
   }
-  .nav-links.open{display:flex;}
+  .nav-links.open{
+    margin-right: 10px;
+    display:flex;}
   .hero{min-height:30vh;}
 }
 
